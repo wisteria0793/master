@@ -27,12 +27,12 @@ from sklearn.metrics import silhouette_score, silhouette_samples
 from sklearn.preprocessing import MultiLabelBinarizer
 
 # --- 定数定義: ファイルパス ---
-EMBEDDINGS_PATH = '/Users/atsuyakatougi/Desktop/thesis/embedding/facility_embeddings.npy'
-LDA_RESULTS_PATH = '/Users/atsuyakatougi/Desktop/thesis/lda/lda_results_cl_6_without_noun.csv'
-FACILITIES_JSON_PATH = '/Users/atsuyakatougi/Desktop/thesis/filtered_facilities.json'
+EMBEDDINGS_PATH = './data/processed/embedding/sentence-transformer/facility_embeddings.npy'
+LDA_RESULTS_PATH = './data/processed//lda/lda_results_cl_10.csv'
+FACILITIES_JSON_PATH = './data/processed/poi/filtered_facilities.json'
 
 # Output CSV path
-OUTPUT_LDA_EVALUATION_CSV = '/Users/atsuyakatougi/Desktop/thesis/evaluate_lda/lda_cluster_evaluation_results_cl_6_without_noun_categories.csv'
+OUTPUT_LDA_EVALUATION_CSV = './data/processed//lda/lda_cluster_evaluation_results_cl_10_categories.csv'
 
 # --- 関数定義 ---
 def create_type_vectors_dynamically(facilities_list):

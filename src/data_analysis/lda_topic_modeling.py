@@ -13,8 +13,8 @@ import japanize_matplotlib
 
 # --- Configuration ---
 CONFIG = {
-    "input_json_path": "./data/processed/filtered_facilities.json",
-    "output_csv_path_template": "data/processed/lda/lda_results_cl_{num_topics}_without_noun.csv",
+    "input_json_path": "./data/processed/poi/filtered_facilities.json",
+    "output_csv_path_template": "data/processed/lda/lda_results_cl_{num_topics}.csv",
     "lda_params": {
         "num_topics": 10,
         "random_state": 100,
@@ -32,7 +32,7 @@ CONFIG = {
         "wordcloud_words": 20,
         "bargraph_words": 10,
     },
-    "pos_to_keep": ['副詞', '形容詞', '形容動詞'], # Parts of speech to keep
+    "pos_to_keep": ['名詞', '副詞','形容詞', '形容動詞'], # Parts of speech to keep
 }
 
 

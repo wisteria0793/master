@@ -7,18 +7,120 @@
 ### 手順
 1. データ収集<br>
    施設紹介文「はこぶら」, Google Places API, Flickr
-2. データ分析
+2. LDAとbertなどを用いたデータ分析<br>
    はこぶらから得た全ての施設紹介文に対し以下を適用した<br>
    2-1. LDAを用いて、トピックごとにクラスタリング<br>
+      2-1-1. 2-2で求めたsentence-bertのベクトルからPOIの類似度を求め、LDAにより得られたクラスタが施設紹介文においてまとまりを持っているのか<br>
+      -  名詞あり・なし問わず施設紹介文の意味的類似度は大したまとまりがないことがわかった<br>
+
    2-2. Sentence-BERTとCLIPテキストエンコーダで埋め込み表現を作成<br>
     - 2-2-1. 施設紹介文のオリジナルベクトル,施設紹介文ベクトルからカテゴリ(機能)ベクトルの単純な差分,直交射影による差分を試した
       - 特にsentence-bertでは、減算しないよりもまとまりのある結果が得られた。
     - 2-2-2. 概念プローブによる類似度計算
       - ベクトル減算は「諸刃の剣」であり、今回は「失敗」だった
 
+3. 2.において、sentence-BERTから得られた埋め込み表現を階層的クラスタリングを適用し、分析<br>
+   - 各地区においてのクラスタリング構成比率を地区特性と定義し、ルート生成を行い、10月中旬の学会でポスター発表したさい、この構成費を地区特性というのは無理があるのではないかという指摘をいただいた。もちろん、自分自身もそのように感じていたため、その認識が正しいことを思い知った。以降は、地区特性の定義について改めて考え直す。
+   
+   <img src="./images/IMG_2545.jpeg" alt="学会参加時の様子" width="400px">
+
+   
+
 
 
 ### 結果
+
+<details><summary>2-1-1の実行結果　名詞あり　sentence-bert</summary>
+
+```markdown:
+--- 2. 埋め込み表現に基づくLDAクラスタ評価 ---
+
+埋め込みに基づく全体のシルエットスコア (Cosine): 0.0127
+
+--- クラスタごとの平均シルエットスコア (埋め込み) ---
+label
+0   -0.048397
+1   -0.024757
+3   -0.149527
+4   -0.029827
+5    0.010929
+6    0.011178
+7    0.128302
+8    0.077550
+9    0.000000
+Name: score, dtype: float32
+
+--- 3. 機能（types）に基づくLDAクラスタ評価 ---
+動的に生成されたカテゴリ（types）の数: 151
+/Users/atsuyakatougi/Desktop/master/venv/lib/python3.11/site-packages/sklearn/metrics/pairwise.py:2462: DataConversionWarning: Data was converted to boolean for metric jaccard
+  warnings.warn(msg, DataConversionWarning)
+
+機能的タイプに基づく全体のシルエットスコア (Jaccard): -0.0052
+
+--- クラスタごとの平均シルエットスコア (機能) ---
+/Users/atsuyakatougi/Desktop/master/venv/lib/python3.11/site-packages/sklearn/metrics/pairwise.py:2462: DataConversionWarning: Data was converted to boolean for metric jaccard
+  warnings.warn(msg, DataConversionWarning)
+label
+0    0.003334
+1   -0.002720
+3   -0.035357
+4   -0.004778
+5    0.004738
+6   -0.052790
+7    0.089608
+8   -0.010608
+9    0.000000
+Name: score, dtype: float64
+```
+</details>
+
+
+<details><summary>2-1-1の実行結果　名詞なし　sentence-bert</summary>
+
+```markdown:
+--- 2. 埋め込み表現に基づくLDAクラスタ評価 ---
+
+埋め込みに基づく全体のシルエットスコア (Cosine): -0.1310
+
+--- クラスタごとの平均シルエットスコア (埋め込み) ---
+label
+0   -0.049909
+1   -0.029548
+2   -0.086759
+3   -0.197971
+4   -0.026067
+5   -0.153769
+6   -0.132985
+7   -0.066479
+8   -0.398607
+9   -0.087607
+Name: score, dtype: float32
+
+--- 3. 機能（types）に基づくLDAクラスタ評価 ---
+動的に生成されたカテゴリ（types）の数: 151
+/Users/atsuyakatougi/Desktop/master/venv/lib/python3.11/site-packages/sklearn/metrics/pairwise.py:2462: DataConversionWarning: Data was converted to boolean for metric jaccard
+  warnings.warn(msg, DataConversionWarning)
+
+機能的タイプに基づく全体のシルエットスコア (Jaccard): -0.0596
+
+--- クラスタごとの平均シルエットスコア (機能) ---
+/Users/atsuyakatougi/Desktop/master/venv/lib/python3.11/site-packages/sklearn/metrics/pairwise.py:2462: DataConversionWarning: Data was converted to boolean for metric jaccard
+  warnings.warn(msg, DataConversionWarning)
+label
+0   -0.052181
+1   -0.021415
+2   -0.048258
+3   -0.067847
+4   -0.046614
+5   -0.065878
+6   -0.068717
+7   -0.056811
+8   -0.095622
+9   -0.064143
+Name: score, dtype: float64
+```
+</details>
+
 <details><summary>2-2-1の実行結果　sentence-bert</summary>
 
 ```markdown:
@@ -886,6 +988,27 @@
 </details>
 
 
+<details><summary>3の実行結果　クラスタ数10 sentence-bert</summary>
+
+
+| クラスタID | 解釈 | POI数 |
+| --------  | --- | ----- |
+| 1    | 食事処  | 205|
+| 2    | カフェ・体験  | 37|
+| 3    | 買い物・軽食  | 178|
+| 4    | ホール・パーク  | 34|
+| 5    | 温泉・エンタメ施設  | 74|
+| 6    | 記念館  | 48|
+| 7    | 坂・自然  | 83|
+| 8    | 跡・石碑  | 33|
+| 9    | 歴史的・文化的建造物  | 62 |
+| 10    | 神社・仏閣・ 象 | 67|
+
+
+</details>
+
 
 ### 考察
-1. 手順2-2については、取得した施設紹介文に対して、カテゴリベクトルを引くことで機能面を取り除くことを目指したが結果として、2-2-2で行った結果から減算することによりかえって、特性面が失われるという結果となった。
+1. 手順2-1については、LDAを用いてトピックごとにクラスタを作成したが、施設紹介文をベクトル化し、類似度を計測した結果、クラスタごとに意味的なまとまりが見られないという結果となった。
+2. 手順2-2については、取得した施設紹介文に対して、カテゴリベクトルを引くことで機能面を取り除くことを目指したが結果として、2-2-2で行った結果から減算することによりかえって、特性面が失われるという結果となった。<br>
+結論,現状はオリジナルな施設紹介文ベクトルを使用することとする
