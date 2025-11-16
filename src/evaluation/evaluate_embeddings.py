@@ -179,7 +179,7 @@ if __name__ == "__main__":
         "--model_type",
         type=str,
         required=True,
-        choices=["sentence-transformer", "clip"],
+        choices=["sentence-bert", "clip"],
         help="評価対象の埋め込みを生成したモデルのタイプ。"
     )
     args = parser.parse_args()
