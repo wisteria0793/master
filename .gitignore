@@ -1,0 +1,20 @@
+# 環境設定ファイル
+.env
+
+# データファイル
+data/raw/
+data/processed/
+
+# 実行環境
+venv/
+.venv/
+
+# Pythonが自動生成するコンパイル済みファイル
+__pycache__/
+*.pyc
+
+# 訓練済みモデルファイル
+models/
+
+# macOSやWindowsが自動生成する隠しファイル
+.DS_Store
