@@ -9,5 +9,5 @@
    施設紹介文「はこぶら」, Google Places API, Flickr
 2. データ分析
    はこぶらから得た全ての施設紹介文に対し以下を適用した<br>
-   2-1. LDA
+   2-1. LDA<br>
    2-2. Sentence-BERT
