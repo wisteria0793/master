@@ -56,14 +56,14 @@ def load_data_and_model(model_type: str):
     model_name = MODEL_MAP[model_type]
     # sanitized_model_name = model_name.replace("/", "_")
     input_dir = Path("data/processed/embedding") / model_type
-    master_json_path = Path("data/processed/filtered_facilities.json")
+    master_json_path = Path("data/processed/poi/filtered_facilities.json")
 
     logging.info(f"--- データ読み込み開始 (入力元: {input_dir}) ---")
     
     embedding_paths = {
-        "オリジナル": input_dir / "facility_embeddings.npy",
-        "単純減算": input_dir / "facility_embeddings_simple_sub.npy",
-        "直交射影": input_dir / "facility_embeddings_projected_sub.npy",
+        "オリジナル": input_dir / "combined_facility_embeddings_100m_03.npy",
+        # "単純減算": input_dir / "facility_embeddings_simple_sub.npy",
+        # "直交射影": input_dir / "facility_embeddings_projected_sub.npy",
     }
 
     embeddings = {}
