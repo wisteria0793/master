@@ -1,67 +1,67 @@
 import os
 import json
 import glob
-from PIL import Image
-import piexif
 from tqdm import tqdm
 
-def dms_to_decimal(dms, ref):
-    """Converts GPS coordinates from DMS (Degrees, Minutes, Seconds) to decimal degrees."""
-    degrees = dms[0][0] / dms[0][1]
-    minutes = dms[1][0] / dms[1][1] / 60.0
-    seconds = dms[2][0] / dms[2][1] / 3600.0
-    
-    decimal = degrees + minutes + seconds
-    if ref in ['S', 'W']:
-        decimal = -decimal
-    return decimal
-
-def extract_gps_data(image_dir, output_path):
+def extract_gps_from_json_metadata(image_dir, output_path):
     """
-    Extracts GPS latitude and longitude from all images in a directory
-    and saves the data to a JSON file.
+    Extracts GPS latitude and longitude from companion JSON files for each image.
     """
-    image_paths = sorted(glob.glob(os.path.join(image_dir, '*.jpg'))) + \
-                  sorted(glob.glob(os.path.join(image_dir, '*.jpeg')))
+    # Find all JSON metadata files
+    json_paths = sorted(glob.glob(os.path.join(image_dir, '*.json')))
 
-    if not image_paths:
-        print(f"No JPG/JPEG images found in directory: {image_dir}")
+    if not json_paths:
+        print(f"No JSON metadata files found in directory: {image_dir}")
         return
 
     gps_data = {}
-    images_with_gps = 0
-    images_without_gps = 0
+    files_with_gps = 0
+    files_without_gps = 0
 
-    print(f"Found {len(image_paths)} images to process...")
+    print(f"Found {len(json_paths)} metadata files to process...")
 
-    for path in tqdm(image_paths, desc="Extracting GPS data"):
-        filename = os.path.basename(path)
+    for path in tqdm(json_paths, desc="Extracting GPS from JSON"):
         try:
-            img = Image.open(path)
-            exif_dict = piexif.load(img.info.get('exif', b''))
-            gps_ifd = exif_dict.get('GPS')
+            with open(path, 'r', encoding='utf-8') as f:
+                metadata = json.load(f)
 
-            if gps_ifd:
-                lat_dms = gps_ifd.get(piexif.GPSIFD.GPSLatitude)
-                lon_dms = gps_ifd.get(piexif.GPSIFD.GPSLongitude)
-                lat_ref = gps_ifd.get(piexif.GPSIFD.GPSLatitudeRef, b'N').decode('utf-8')
-                lon_ref = gps_ifd.get(piexif.GPSIFD.GPSLongitudeRef, b'E').decode('utf-8')
+            # The image filename is the id + '_' + secret + '.jpg'
+            image_id = metadata.get("id")
+            secret = metadata.get("secret")
+            if not (image_id and secret):
+                files_without_gps += 1
+                continue
+            
+            # Construct the corresponding jpg filename based on the pattern found
+            image_filename = f"{image_id}_{secret}.jpg"
 
-                if lat_dms and lon_dms:
-                    lat = dms_to_decimal(lat_dms, lat_ref)
-                    lon = dms_to_decimal(lon_dms, lon_ref)
-                    gps_data[filename] = {'lat': lat, 'lon': lon}
-                    images_with_gps += 1
-                else:
-                    gps_data[filename] = None
-                    images_without_gps += 1
+            location = metadata.get('location')
+            if location and 'latitude' in location and 'longitude' in location:
+                # Convert to float, as they might be strings
+                lat = float(location['latitude'])
+                lon = float(location['longitude'])
+                
+                # Skip if lat/lon are 0.0, which often indicates no real data
+                if lat == 0.0 and lon == 0.0:
+                    gps_data[image_filename] = None
+                    files_without_gps += 1
+                    continue
+
+                gps_data[image_filename] = {'lat': lat, 'lon': lon}
+                files_with_gps += 1
             else:
-                gps_data[filename] = None
-                images_without_gps += 1
-        except Exception as e:
+                gps_data[image_filename] = None
+                files_without_gps += 1
+        except (json.JSONDecodeError, KeyError, TypeError) as e:
+            filename = os.path.basename(path)
             print(f"Could not process {filename}: {e}")
-            gps_data[filename] = None
-            images_without_gps += 1
+            # Try to construct a key for the error case anyway
+            image_filename_base = os.path.splitext(filename)[0]
+            # This is a guess; might need adjustment if filenames don't match
+            possible_jpg_filename = f"{image_filename_base}.jpg" 
+            gps_data[possible_jpg_filename] = None
+            files_without_gps += 1
+            continue
 
     # Ensure the output directory exists
     output_dir = os.path.dirname(output_path)
@@ -72,21 +72,16 @@ def extract_gps_data(image_dir, output_path):
         json.dump(gps_data, f, indent=4)
 
     print("\n--- GPS Extraction Summary ---")
-    print(f"Total images processed: {len(image_paths)}")
-    print(f"Images with GPS data: {images_with_gps}")
-    print(f"Images without GPS data: {images_without_gps}")
+    print(f"Total metadata files processed: {len(json_paths)}")
+    print(f"Images with GPS data found: {files_with_gps}")
+    print(f"Images without GPS data: {files_without_gps}")
     print(f"GPS data saved to: {output_path}")
 
 if __name__ == '__main__':
     project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
     image_directory = os.path.join(project_root, 'data', 'raw', 'hakodate_all_photos_bbox')
-    output_file_path = os.path.join(project_root, 'data', 'processed', 'embedding', 'clip', 'image_gps_data.json')
     
-    # Check for required library
-    try:
-        import piexif
-    except ImportError:
-        print("Error: 'piexif' library not found.")
-        print("Please install it using: pip install piexif")
-    else:
-        extract_gps_data(image_directory, output_file_path)
+    # Use the user-specified output path
+    output_file_path = os.path.join(project_root, 'data', 'processed', 'images', 'image_gps_data.json')
+    
+    extract_gps_from_json_metadata(image_directory, output_file_path)
