@@ -8,7 +8,7 @@ import tqdm
 # --- Configuration ---
 # Alpha: Balances the influence of text vs. images.
 # 0.0 = 100% image, 1.0 = 100% text.
-ALPHA = 0.8
+ALPHA = 0.5
 
 # Sigma (in meters): Controls how quickly the geographic weight falls off.
 # A smaller sigma means only very close images have a high weight.
@@ -17,7 +17,7 @@ SIGMA = 200.0
 
 # Similarity Threshold: Images with a cosine similarity below this value will be ignored.
 # This helps filter out noisy or irrelevant images.
-SIMILARITY_THRESHOLD = 0.23
+SIMILARITY_THRESHOLD = 0.2611
 
 # --- Helper Functions ---
 
@@ -59,7 +59,7 @@ def combine_embeddings(project_root, alpha, sigma, similarity_threshold):
     # Corrected path for image GPS data as per user feedback
     image_gps_path = os.path.join(project_root, 'data', 'processed', 'images', 'image_gps_data.json')
     
-    output_path = os.path.join(project_root, 'data', 'processed', 'embedding', 'clip', f'combined_facility_embeddings_023_08.npy')
+    output_path = os.path.join(project_root, 'data', 'processed', 'embedding', 'clip', f'combined_facility_embeddings_02611_05.npy')
 
     # --- 2. Load All Data ---
     print("Loading data files...")

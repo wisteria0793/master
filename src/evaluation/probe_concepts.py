@@ -61,7 +61,7 @@ def load_data_and_model(model_type: str):
     logging.info(f"--- データ読み込み開始 (入力元: {input_dir}) ---")
     
     embedding_paths = {
-        "オリジナル": input_dir / "combined_facility_embeddings_023_05.npy",
+        "オリジナル": input_dir / "combined_facility_embeddings_02611_05.npy",
         # "単純減算": input_dir / "facility_embeddings_simple_sub.npy",
         # "直交射影": input_dir / "facility_embeddings_projected_sub.npy",
     }
