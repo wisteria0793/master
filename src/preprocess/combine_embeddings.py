@@ -19,7 +19,7 @@ SIGMA = 200.0
 SIMILARITY_THRESHOLD = 0.2418
 
 # 最大距離（メートル）: ここで指定した距離より遠い画像は計算から除外する
-MAX_DISTANCE_METERS = 500
+MAX_DISTANCE_METERS = 200
 
 # --- ヘルパー関数 ---
 
