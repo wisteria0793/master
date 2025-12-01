@@ -13,7 +13,6 @@
 - **施設紹介文**: 函館市の観光公式サイト「はこぶら」から収集。
 - **施設情報**: Google Places APIを利用して、POI（Point of Interest）のカテゴリや座標などを取得。
 - **観光写真**: Flickr APIを通じて、観光客が撮影した写真を収集。
-- **Google Street View**: 現在申請中。今後使用予定。
 
 ---
 
@@ -100,7 +99,7 @@ LDAは単語の共起に基づいてトピックを抽出するため、文脈�
   *Photo by [inunami](https://www.flickr.com/photos/94693136@N05/) / [CC BY 2.0](https://creativecommons.org/licenses/by/2.0/deed.en)*
 
 ### 考察
-テキストとの類似度が高いと判定された画像が、必ずしもそのPOIの「雰囲気」を正しく表現しているとは限らないことが明らかになりました。「ラッキーピエロ」の雰囲気を表現するために「ハセガワストア」の画像を加えるのは不適切だと考えます。他の事例を見ても、関係のない画像が多数含まれており、単純な類似度でのフィルタリングには限界があると結論付けました。
+テキストとの類似度が高いと判定された画像が、必ずしもそのPOIの「雰囲気」を正しく表現しているとは限らない。「ラッキーピエロ」の雰囲気を表現するために「ハセガワストア」の画像を加えるのは不適切だと考える。他の事例を見ても、関係のない画像が多数含まれており、単純な類似度でのフィルタリングには限界があると思う。また、画像ベクトルの和をとっているため、仮にそれぞれの画像が特性を捉えられても、総合で見るとぼんやりとした１つの画像ベクトルになってしまうため、適切ではないと考え、別の方法を模索する。
 
 
 ---
@@ -125,10 +124,19 @@ Google Street View APIで利用する画像を効率的に取得するため、�
 ### 生成された成果物
 *   **50m間隔：90,240ポイント**
     *   `./docs/results/road_points_visualization_50m_from_net_FULL.html` 
-    ![50m間隔](./images/50m_from_net_full.png)<br>
+    ![50m間隔（全域）可視化マップ](./images/50m_from_net_full.png)<br>
 *   **100m間隔：49,953ポイント**
     *   `./docs/results/road_points_visualization_100m_from_net_FULL.html` 
-    ![50m間隔](./images/50m_from_net_full.png)<br>
+    ![100m間隔（全域）可視化マップ](./images/100m_from_net_full.png)<br>
+*   **50m間隔（絞り込み後）：5,608ポイント**
+    *   `./data/processed/road_points/road_points_50m_filtered.json`
+    *   `./docs/results/road_points_visualization_50m_filtered.html`<br>
+    ![100m間隔（絞り込み後）可視化マップ](./images/road_points_50m_filtered.png)<br>
+
+*   **100m間隔（絞り込み後）：3,273ポイント**
+    *   `./data/processed/road_points/road_points_100m_filtered.json`
+    *   `./docs/results/road_points_visualization_100m_filtered.html`
+    ![100m間隔（絞り込み後）可視化マップ](./images/50m_from_net_filtered_full.png)<br>
 
 
 ### 考察

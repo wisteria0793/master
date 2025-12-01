@@ -9,10 +9,14 @@ def create_visualization_map():
     """
     # --- Configuration ---
     ROAD_DATA_FILE = './data/raw/osm_hakodate/hakodate_osm_raw.json'
-    POINTS_FILE = './data/processed/road_points/road_points_100m_from_net.json'
-    OUTPUT_FILE = './docs/results/road_points_visualization_100m_from_net_FULL.html'
+    POINTS_FILE = './data/processed/road_points/road_points_50m_filtered.json'
+    OUTPUT_FILE = './docs/results/road_points_visualization_50m_filtered.html'
     
-    # Downsample data to keep the map responsive (set to 1 to plot everything)
+    # BBox for filtering roads to display
+    BBOX = [41.73987856651839, 140.6939413999981, 41.78479021564596, 140.73818711897565]
+    lat_min, lon_min, lat_max, lon_max = BBOX
+    
+    # Plot all filtered points and relevant roads
     PLOT_EVERY_NTH_ROAD = 1
     PLOT_EVERY_NTH_POINT = 1
 
@@ -34,7 +38,6 @@ def create_visualization_map():
         return
 
     # --- Create Base Map ---
-    # Center the map on the average coordinate of the generated points
     if not points_to_plot:
         print("No points to plot. Centering on a default Hakodate location.")
         map_center = [41.7687, 140.7288] # Default to Hakodate station
@@ -43,10 +46,10 @@ def create_visualization_map():
         map_center = [df['lat'].mean(), df['lon'].mean()]
         
     print(f"Creating map centered at {map_center}...")
-    m = folium.Map(location=map_center, zoom_start=12)
+    m = folium.Map(location=map_center, zoom_start=14) # Zoom in closer
 
     # --- Plot Roads ---
-    print("Filtering and plotting road network...")
+    print("Filtering and plotting road network within the bounding box...")
     nodes_lookup = {node['id']: (node['lat'], node['lon']) for node in osm_data.get('nodes', [])}
     roads = [way for way in osm_data.get('ways', []) if 'highway' in way.get('tags', {})]
     
@@ -54,15 +57,23 @@ def create_visualization_map():
     for i, road in enumerate(roads):
         if i % PLOT_EVERY_NTH_ROAD == 0:
             way_points = [nodes_lookup[node_id] for node_id in road.get('nodes', []) if node_id in nodes_lookup]
-            if len(way_points) >= 2:
+            
+            # Check if any part of the road is within the bbox to decide whether to plot it
+            is_road_in_bbox = False
+            for lat, lon in way_points:
+                if lat_min <= lat <= lat_max and lon_min <= lon <= lon_max:
+                    is_road_in_bbox = True
+                    break
+            
+            if is_road_in_bbox and len(way_points) >= 2:
                 folium.PolyLine(
                     locations=way_points,
                     color='blue',
-                    weight=1,
-                    opacity=0.7
+                    weight=1.5,
+                    opacity=0.8
                 ).add_to(m)
                 plotted_road_count += 1
-    print(f"Plotted {plotted_road_count} road segments (1 in every {PLOT_EVERY_NTH_ROAD}).")
+    print(f"Plotted {plotted_road_count} road segments.")
 
     # --- Plot Generated Points ---
     print(f"Plotting generated points...")
@@ -78,7 +89,7 @@ def create_visualization_map():
                 fill_opacity=0.8
             ).add_to(m)
             plotted_point_count += 1
-    print(f"Plotted {plotted_point_count} generated points (1 in every {PLOT_EVERY_NTH_POINT}).")
+    print(f"Plotted {plotted_point_count} generated points.")
 
     # --- Save Map ---
     print(f"Saving map to {OUTPUT_FILE}...")
