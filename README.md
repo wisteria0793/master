@@ -126,10 +126,10 @@ Google Street View APIで利用する画像を効率的に取得するため、�
 *   **50m間隔：90,240ポイント**
     *   `./docs/results/road_points_visualization_50m_from_net_FULL.html` 
     ![50m間隔](./images/50m_from_net_full.png)<br>
+*   **100m間隔：49,953ポイント**
+    *   `./docs/results/road_points_visualization_100m_from_net_FULL.html` 
+    ![50m間隔](./images/50m_from_net_full.png)<br>
 
-*    **100m間隔：49953ポイント**
-    *   `./docs/results/road_points_visualization_100m_from_net_FULL.html`
-    ![100m間隔](./images/100m_from_net_full.png)<br>
 
 ### 考察
 この手法により、広範囲にわたる道路ネットワークからGoogle Street View APIで利用可能な撮影地点を、指定した密度で効率的かつ体系的にサンプリングできることが確認された。生成された可視化マップにより、サンプリング地点の網羅性と間隔の均一性を視覚的に評価することが可能である。
