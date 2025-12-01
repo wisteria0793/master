@@ -123,13 +123,12 @@ Google Street View APIで利用する画像を効率的に取得するため、�
     *   `folium`ライブラリを使用し、HTML形式の地図ファイルを生成。
 
 ### 生成された成果物
-*   **座標データ**:
-    *   `./data/processed/road_points/road_points_50m_from_net.json` (50m間隔の座標リスト、90,240点)
-    *   `./data/processed/road_points/road_points_100m_from_net.json` (100m間隔の座標リスト、49,953点)
-*   **可視化マップ**:
-    *   `./docs/results/road_points_visualization_50m_from_net_FULL.html` (50m間隔の全地点可視化マップ)<br> ポイント数: 90240<br>
+*   **50m間隔：90,240ポイント**
+    *   `./docs/results/road_points_visualization_50m_from_net_FULL.html` 
     ![50m間隔](./images/50m_from_net_full.png)<br>
-    *   `./docs/results/road_points_visualization_100m_from_net_FULL.html` (100m間隔の全地点可視化マップ)<br> ポイント数: 49953<br>
+
+*    **100m間隔：49953ポイント**
+    *   `./docs/results/road_points_visualization_100m_from_net_FULL.html`
     ![100m間隔](./images/100m_from_net_full.png)<br>
 
 ### 考察
