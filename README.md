@@ -290,6 +290,10 @@ python src/data_analysis/plot_fetch_status.py data/raw/street_view_images_test/f
 **出力**:
 - `fetch_status_map.html`: 取得に成功した地点（緑の点）がプロットされたインタラクティブ地図。
 
+![収集結果の可視化マップ](./images/get_points.png)<br>
+*図: `plot_fetch_status.py`で生成された収集結果の可視化例 (緑の点が取得成功地点)*
+
+
 
 ## 今後の計画
 ### GNNによる地区特性の再定義
