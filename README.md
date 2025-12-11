@@ -214,6 +214,83 @@ graph TD
     LV3 --> H_LV
 ```
 
+---
+
+## Google Street View画像収集ワークフロー (実験6以降)
+
+実験5の成果を基盤とし、街の景観を体系的に収集・分析するためのワークフローを構築しました。このワークフローは、データの生成、収集、可視化の3つの主要なスクリプトから構成されます。
+
+### 主な機能
+- **道路ベースの座標点生成**: OpenStreetMap(OSM)データから道路網を抽出し、指定間隔で座標点を生成します。
+- **バウンディングボックスによるフィルタリング**: 特定の地理的範囲内の道路のみを対象とします。
+- **インテリジェントな画像収集**:
+    - **コスト最適化**: 無料のMetadata APIで画像の有無を事前確認し、無駄なAPIコールを削減します。
+    - **補間探索**: 50m間隔の点で画像が見つからない場合、その区間をさらに細かく探索し、データの欠損を防ぎます。
+    - **地理的重複排除**: 収集済みの画像の近傍（例: 75m以内）では新たな画像を取得せず、サンプリングの偏りを抑制します。
+- **複数方向の画像取得**: 1つの地点から複数方向（例: 北・東・南・西）の画像を一度に取得できます。
+- **進捗の可視化**: 収集プロセスの詳細なログを記録し、インタラクティブな地図上に結果（成功・スキップ・失敗）を色分けして表示します。
+
+### 実行手順
+
+#### 1. セットアップ
+**依存ライブラリのインストール**:
+```bash
+pip install geopy tqdm folium pandas
+```
+
+**.envファイルの作成**:
+プロジェクトのルートに`.env`ファイルを作成し、Google APIキーを設定します。
+```
+GOOGLE_API_KEY="ここにあなたのAPIキーを記述"
+
+# Street View画像収集をテストモードで実行する場合はtrue、本番モードはfalse
+SV_TEST_MODE=true
+```
+
+---
+#### 2. [ステップ1] 座標点の生成とフィルタリング
+OSMデータから道路に沿った50m間隔の座標点を生成し、指定したバウンディングボックスで絞り込みます。
+
+**コマンド**:
+```bash
+python src/preprocess/generate_and_filter_points.py
+```
+
+**出力**:
+- `data/processed/road_points/road_points_per_way_50m_filtered.json`
+  - フィルタリングされた、道路ごとの座標リスト。
+
+---
+#### 3. [ステップ2] Street View画像の収集
+ステップ1で生成された座標リストに基づき、Street View画像を収集します。
+
+**コマンド**:
+```bash
+python src/collect_data/get_street_view.py
+```
+
+**出力**:
+- `data/raw/street_view_images_.../`: 画像ファイル群。
+- `data/raw/street_view_images_.../fetch_log.json`: 全ての探索結果を記録した詳細ログ。
+- `data/raw/street_view_images_.../pano_metadata.json`: 収集に成功した画像の`pano_id`と座標情報の対応表。
+  - *出力ディレクトリはテストモードか本番モードかで変わります。*
+
+---
+#### 4. [ステップ3] 収集結果の可視化
+ステップ2で生成されたログファイルを元に、どの地点で画像の取得に成功したかをインタラクティブな地図上にプロットします。
+
+**コマンド** (ログファイルのパスを引数として渡します):
+```bash
+# テストモードの場合の例
+python src/data_analysis/plot_fetch_status.py data/raw/street_view_images_test/fetch_log.json
+
+# 本番モードの場合の例
+# python src/data_analysis/plot_fetch_status.py data/raw/street_view_images_50m_optimized/fetch_log.json
+```
+
+**出力**:
+- `fetch_status_map.html`: 取得に成功した地点（緑の点）がプロットされたインタラクティブ地図。
+
 
 ## 今後の計画
 ### GNNによる地区特性の再定義
