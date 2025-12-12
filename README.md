@@ -294,6 +294,39 @@ python src/data_analysis/plot_fetch_status.py data/raw/street_view_images_test/f
 *図: `plot_fetch_status.py`で生成された収集結果の可視化例 (緑の点が取得成功地点)*
 
 
+## 実験7: セマンティックセグメンテーションと緑地率計算
+都市景観画像から詳細なオブジェクト（道路、建物、植生など）をピクセル単位で分類
+- **使用したモデル**:
+  - UNet / ResNet : 精度が悪い&分類できる対象が少ないように感じたため、断念
+  - mask2former: 分類の精度は良かったが、ピクセル計算ができないため断念
+  - Cityscapesデータセットで学習済みの`SegFormer`: 問題なくできたため、以降これを使用
+- **処理**:
+  - `vegetation`（植生）クラスの占有率を緑地率などを計算
+  - 元の画像と色分けされたセグメンテーション結果を並べて可視化・保存
+- **結果**:
+  ![収集結果の可視化マップ](./images/segformer_segmentation_result.png)<br>
+  ```
+  --- クラス別占有率 ---
+  class name      | occupancy (%)
+  --------------- | ----------
+  road            |    38.35%
+  sidewalk        |     7.79%
+  building        |    21.17%
+  wall            |     0.12%
+  fence           |     0.60%
+  pole            |     0.12%
+  traffic light   |     0.01%
+  vegetation      |     9.98%
+  terrain         |     0.16%
+  sky             |    21.34%
+  person          |     0.00%
+  car             |     0.35%
+  ------------------------
+  緑地率 (vegetation): 9.98%
+  ------------------------
+  ```
+
+
 
 ## 今後の計画
 ### GNNによる地区特性の再定義
@@ -316,3 +349,6 @@ python src/data_analysis/plot_fetch_status.py data/raw/street_view_images_test/f
 
 - **概念プローブの取り扱い**:
   特にCLIPについて、そもそも画像とテキストとの関連性を学習させているため、「美味しいコーヒーが飲めるお店」というフレーズとの類似度を測ることが不適切な可能性がある。
+
+---
+
