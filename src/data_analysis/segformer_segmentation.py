@@ -135,7 +135,7 @@ def visualize_segmentation(original_image, raw_ids, model, save_path="segformer_
 if __name__ == "__main__":
     # --- ユーザーが編集する部分 ---
     # セグメンテーションを行いたい画像ファイルのフルパスを指定してください
-    IMAGE_PATH = "./data/raw/street_view_images_50m_optimized/pano_zvkE2ljaDCUFluC_42mXxA_h90.jpg"
+    IMAGE_PATH = "./data/raw/hakodate_all_photos_bbox/51373177546_52f07c72f2.jpg"
     # --- 編集はここまで ---
 
     if not os.path.isfile(IMAGE_PATH):
