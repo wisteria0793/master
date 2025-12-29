@@ -14,14 +14,16 @@ model = AutoModelForZeroShotImageClassification.from_pretrained("geolocal/Street
 # 1. 分類したい画像を開く
 try:
     # ここに分類したい画像のパスを指定してください
-    image_path = "data/raw/hakodate_all_photos/49756493412_e22ba4dc96.jpg"
+    image_path = "data/raw/street_view_images_50m_optimized/pano_Z_vLZBn614K2XIsJUfla1g_h270.jpg"
+    # image_path = "data/raw/street_view_images_50m_optimized/pano_z6hIUbgZphYWgxuJJGmyNg_h90.jpg"
     image = Image.open(image_path).convert("RGB")
 except FileNotFoundError:
     print(f"エラー: '{image_path}' が見つかりませんでした。画像パスを確認してください。")
     exit()
 
 # 2. 分類に使いたいラベルのリストを定義する
-candidate_labels = ["urban area", "natural landscape", "residential street", "commercial district", "highway"]
+# candidate_labels = ["urban area", "natural landscape", "residential street", "commercial district", "highway"]
+candidate_labels = ["asphalt road", "cobblestone road", "intersection", "gravel road", "paved road", "sidewalk", "trail", "Scattered hailstone pavement"]
 
 # 3. モデルへの入力を作成する
 inputs = processor(images=image, text=candidate_labels, return_tensors="pt", padding=True)
