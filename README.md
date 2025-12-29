@@ -362,6 +362,12 @@ python src/gnn/train_graph_autoencoder.py
 ```bash
 python src/gnn/visualize_gnn_clusters.py
 ```
+
+<img src="./images/Screenshot 2025-12-29 at 19.25.38.png" alt="GNNのクラスタ結果" width="700px"><br>
+
+図: 各地点についてGNNでクラスタリング <br>
+
+
 ---
 ### 考察
 GNNを用いることで、単に景観が似ているだけでなく、「道路で繋がっている」という物理的な制約を考慮した上で、地区の特性を抽出することができた。これにより、より現実に即した「景観エリア」の定義が可能となり、例えば「緑が多い住宅街エリア」「道路が入り組んだ商業エリア」といった、より解釈性の高い地区分類が期待できる。
