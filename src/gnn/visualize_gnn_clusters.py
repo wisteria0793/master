@@ -21,7 +21,7 @@ from sklearn.preprocessing import StandardScaler
 
 # --- 設定 ---
 BASE_DIR = '/Users/atsuyakatougi/Desktop/master'
-N_CLUSTERS = 20 # GNNエンベディングから作成するクラスタ数
+N_CLUSTERS = 6 # GNNエンベディングから作成するクラスタ数
 EMBEDDING_DIM = 64 # 使用するエンベディングの次元数
 
 # --- パス設定 ---
