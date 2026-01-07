@@ -38,11 +38,12 @@ LEARNING_RATE = 0.01
 EMBEDDING_DIM = 64 # 学習後の特徴量の次元数
 
 # --- パス設定 ---
-FEATURES_PATH = os.path.join(BASE_DIR, 'data', 'processed', 'segmentation_results_50m', 'concatenated_vectors.csv')
+# FEATURES_PATH = os.path.join(BASE_DIR, 'data', 'processed', 'segmentation_results_50m', 'concatenated_vectors.csv')
+FEATURES_PATH = os.path.join(BASE_DIR, 'data', 'processed', 'segmentation_results_50m', 'location_features_sorted.csv')
 METADATA_PATH = os.path.join(BASE_DIR, 'data', 'raw', 'street_view_images_50m_optimized', 'pano_metadata.json')
 OSM_PATH = os.path.join(BASE_DIR, 'data', 'raw', 'osm_hakodate', 'Hakodate.osm.xml')
 OUTPUT_DIR = os.path.join(BASE_DIR, 'data', 'processed', 'gnn_embeddings')
-EMBEDDING_OUTPUT_PATH = os.path.join(OUTPUT_DIR, f'embeddings_dim{EMBEDDING_DIM}.csv')
+EMBEDDING_OUTPUT_PATH = os.path.join(OUTPUT_DIR, f'embeddings_dim{EMBEDDING_DIM}_feature_sorted.csv')
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 def load_data():

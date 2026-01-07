@@ -21,11 +21,11 @@ from sklearn.preprocessing import StandardScaler
 
 # --- 設定 ---
 BASE_DIR = '/Users/atsuyakatougi/Desktop/master'
-N_CLUSTERS = 6 # GNNエンベディングから作成するクラスタ数
+N_CLUSTERS = 10 # GNNエンベディングから作成するクラスタ数
 EMBEDDING_DIM = 64 # 使用するエンベディングの次元数
 
 # --- パス設定 ---
-EMBEDDING_PATH = os.path.join(BASE_DIR, 'data', 'processed', 'gnn_embeddings', f'embeddings_dim{EMBEDDING_DIM}.csv')
+EMBEDDING_PATH = os.path.join(BASE_DIR, 'data', 'processed', 'gnn_embeddings', f'embeddings_dim{EMBEDDING_DIM}_feature_sorted.csv')
 METADATA_PATH = os.path.join(BASE_DIR, 'data', 'raw', 'street_view_images_50m_optimized', 'pano_metadata.json')
 OUTPUT_DIR = os.path.join(BASE_DIR, 'docs', 'results')
 os.makedirs(OUTPUT_DIR, exist_ok=True)
@@ -89,7 +89,7 @@ def main():
     plt.xlabel('Point ID')
     plt.ylabel('Distance (Ward)')
     plt.tight_layout()
-    dendrogram_output_path = os.path.join(OUTPUT_DIR, f'gnn_embedding_dendrogram_{N_CLUSTERS}.png')
+    dendrogram_output_path = os.path.join(OUTPUT_DIR, f'gnn_embedding_dendrogram_{N_CLUSTERS}_feature_sorted.png')
     plt.savefig(dendrogram_output_path)
     print(f"デンドログラムを保存しました: {dendrogram_output_path}")
     plt.close()
@@ -125,7 +125,7 @@ def main():
             tooltip=f"Point ID: {row['point_id']}<br>GNN Cluster: {cluster_id}"
         ).add_to(m)
 
-    map_output_path = os.path.join(OUTPUT_DIR, f'gnn_cluster_map_{N_CLUSTERS}.html')
+    map_output_path = os.path.join(OUTPUT_DIR, f'gnn_cluster_map_{N_CLUSTERS}_feature_sorted.html')
     m.save(map_output_path)
     print(f"クラスタ地図を保存しました: {map_output_path}")
     
