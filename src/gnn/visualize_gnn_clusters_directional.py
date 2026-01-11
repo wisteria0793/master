@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 """
-このスクリプトは、事前に学習されたGNNエンベディングを読み込み、
+このスクリプトは、方向別に学習されたGNNエンベディングを読み込み、
 それらをクラスタリングし、結果を地図上に可視化します。
 
 処理手順：
-1. GNNエンベディング (embeddings_dim64.csv) と座標データを読み込みます。
+1. 方向別GNNエンベディング (embeddings_dim64_directional.csv) と座標データを読み込みます。
 2. エンベディングに対して階層的クラスタリングを実行し、デンドログラムを保存します。
-3. 各地点にクラスタIDを割り当てます。
+3. 各地点・方向ごとにクラスタIDを割り当てます。
 4. クラスタリング結果をインタラクティブな地図上に色分けしてプロットし、HTMLファイルとして保存します。
+   この際、同じ地点でも方向ごとに少し位置をずらして表示します。
 """
 
 import pandas as pd
@@ -21,12 +22,11 @@ from sklearn.preprocessing import StandardScaler
 
 # --- 設定 ---
 BASE_DIR = '/Users/atsuyakatougi/Desktop/master'
-N_CLUSTERS = 9 # GNNエンベディングから作成するクラスタ数
+N_CLUSTERS = 10 # GNNエンベディングから作成するクラスタ数
 EMBEDDING_DIM = 64 # 使用するエンベディングの次元数
 
 # --- パス設定 ---
-# 集約済み（平均）エンベディングを使用
-EMBEDDING_PATH = os.path.join(BASE_DIR, 'data', 'processed', 'gnn_embeddings', f'embeddings_dim{EMBEDDING_DIM}_mean.csv')
+EMBEDDING_PATH = os.path.join(BASE_DIR, 'data', 'processed', 'gnn_embeddings', f'embeddings_dim{EMBEDDING_DIM}_directional.csv')
 METADATA_PATH = os.path.join(BASE_DIR, 'data', 'raw', 'street_view_images_50m_optimized', 'pano_metadata.json')
 OUTPUT_DIR = os.path.join(BASE_DIR, 'docs', 'results')
 os.makedirs(OUTPUT_DIR, exist_ok=True)
@@ -52,7 +52,7 @@ def load_data():
     embedding_df['longitude'] = embedding_df['point_id'].map(lambda x: coords_map.get(x, [None, None])[1])
     embedding_df.dropna(subset=['latitude', 'longitude'], inplace=True)
     
-    print(f"{len(embedding_df)} 地点分のエンベディングと座標を読み込みました。")
+    print(f"{len(embedding_df)} 行（地点×方向）のエンベディングと座標を読み込みました。")
     return embedding_df
 
 def main():
@@ -64,8 +64,8 @@ def main():
     # --- 1. 階層的クラスタリング ---
     print("GNNエンベディングの階層的クラスタリングを実行中...")
     
-    # 'point_id' と座標以外の列を特徴量として使用
-    feature_cols = df.columns.drop(['point_id', 'latitude', 'longitude'])
+    # 'point_id', 'direction' と座標以外の列を特徴量として使用
+    feature_cols = df.columns.drop(['point_id', 'direction', 'latitude', 'longitude'])
     features = df[feature_cols].values
     
     # 標準化
@@ -80,17 +80,17 @@ def main():
     dendrogram(
         linked,
         orientation='top',
-        labels=df['point_id'].tolist(),
+        labels=[f"{r['point_id']}_{r['direction']}" for _, r in df.iterrows()],
         distance_sort='descending',
         show_leaf_counts=True,
         truncate_mode='lastp', # ラベルが多すぎるので最後のp個を表示
         p=100
     )
-    plt.title(f'Hierarchical Clustering Dendrogram of Aggregated GNN Embeddings ({N_CLUSTERS} Clusters, Ward Linkage)')
-    plt.xlabel('Point ID')
+    plt.title(f'Hierarchical Clustering Dendrogram of Directional GNN Embeddings ({N_CLUSTERS} Clusters, Ward Linkage)')
+    plt.xlabel('Point ID_Direction')
     plt.ylabel('Distance (Ward)')
     plt.tight_layout()
-    dendrogram_output_path = os.path.join(OUTPUT_DIR, f'gnn_embedding_dendrogram_{N_CLUSTERS}_mean.png')
+    dendrogram_output_path = os.path.join(OUTPUT_DIR, f'gnn_embedding_dendrogram_{N_CLUSTERS}_directional.png')
     plt.savefig(dendrogram_output_path)
     print(f"デンドログラムを保存しました: {dendrogram_output_path}")
     plt.close()
@@ -108,25 +108,44 @@ def main():
     map_center = [df['latitude'].mean(), df['longitude'].mean()]
     m = folium.Map(location=map_center, zoom_start=14)
 
-    # クラスタごとの色を設定（カテゴリカルなカラーマップに変更）
+    # クラスタごとの色を設定（カテゴリカルなカラーマップ）
     colors = plt.cm.get_cmap('tab20', N_CLUSTERS)
+    
+    # 方向ごとのオフセット設定 (度数単位)
+    # 緯度1度≒111km => 0.0001度≒11m
+    # 経度1度≒83km  => 0.00015度≒12m
+    # 少し離して配置することで、1地点の4方向が見えるようにする
+    offset_lat = 0.00015
+    offset_lon = 0.00020
+    
+    dir_offsets = {
+        'front': (offset_lat, 0),
+        'back': (-offset_lat, 0),
+        'right': (0, offset_lon),
+        'left': (0, -offset_lon)
+    }
 
     for idx, row in df.iterrows():
         cluster_id = row['cluster']
         color_rgba = colors(cluster_id)
         color_hex = '#%02x%02x%02x' % (int(color_rgba[0]*255), int(color_rgba[1]*255), int(color_rgba[2]*255))
+        
+        # 方向に応じて座標をずらす
+        d_lat, d_lon = dir_offsets.get(row['direction'], (0, 0))
+        marker_lat = row['latitude'] + d_lat
+        marker_lon = row['longitude'] + d_lon
             
         folium.CircleMarker(
-            location=[row['latitude'], row['longitude']],
-            radius=5,
+            location=[marker_lat, marker_lon],
+            radius=4, # 重なりを防ぐため少し小さく
             color=color_hex,
             fill=True,
             fill_color=color_hex,
             fill_opacity=0.8,
-            tooltip=f"Point ID: {row['point_id']}<br>Cluster: {cluster_id}"
+            tooltip=f"Point: {row['point_id']}<br>Dir: {row['direction']}<br>Cluster: {cluster_id}"
         ).add_to(m)
 
-    map_output_path = os.path.join(OUTPUT_DIR, f'gnn_cluster_map_{N_CLUSTERS}_mean.html')
+    map_output_path = os.path.join(OUTPUT_DIR, f'gnn_cluster_map_{N_CLUSTERS}_directional.html')
     m.save(map_output_path)
     print(f"クラスタ地図を保存しました: {map_output_path}")
     
