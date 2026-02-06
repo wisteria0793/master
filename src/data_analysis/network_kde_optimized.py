@@ -28,16 +28,18 @@ from tqdm import tqdm
 
 # --- 設定 ---
 BASE_DIR = '/Users/atsuyakatougi/Desktop/master'
-N_CLUSTERS = 20
+N_CLUSTERS = 19
 EMBEDDING_DIM = 64
 
 # --- Network KDE パラメータ ---
 TARGET_CLUSTER_ID = 2  # 分析対象のクラスタID (例: 2は緑地エリアと仮定)
 BANDWIDTH = 500       # 密度計算の範囲 (メートル)
-THRESHOLD_DENSITY = 0.05 # これ未満の密度は表示しない
+THRESHOLD_DENSITY = 0.1 # これ未満の密度は表示しない
 
 # --- パス設定 ---
-EMBEDDING_PATH = os.path.join(BASE_DIR, 'data', 'processed', 'gnn_embeddings', f'embeddings_dim{EMBEDDING_DIM}.csv')
+# EMBEDDING_PATH = os.path.join(BASE_DIR, 'data', 'processed', 'gnn_embeddings', f'embeddings_dim{EMBEDDING_DIM}.csv')
+# data/processed/streetclip_embeddings/streetclip_features_mean.csv
+EMBEDDING_PATH = os.path.join(BASE_DIR, 'data', 'processed', 'gnn_embeddings', 'embeddings_dim64_streetclip_mean.csv')
 METADATA_PATH = os.path.join(BASE_DIR, 'data', 'raw', 'street_view_images_50m_optimized', 'pano_metadata.json')
 OSM_PATH = os.path.join(BASE_DIR, 'data', 'raw', 'osm_hakodate', 'Hakodate.osm.xml')
 OUTPUT_DIR = os.path.join(BASE_DIR, 'docs', 'results')
@@ -180,7 +182,8 @@ def main():
                 ).add_to(m)
 
     # 地図を保存
-    map_output_path = os.path.join(OUTPUT_DIR, f'network_kde_optimized_cluster_{TARGET_CLUSTER_ID}_bw{BANDWIDTH}.html')
+    # map_output_path = os.path.join(OUTPUT_DIR, f'network_kde_optimized_cluster_{TARGET_CLUSTER_ID}_bw{BANDWIDTH}.html')
+    map_output_path = os.path.join(OUTPUT_DIR, f'network_kde_streetClip_gnn_cluster{N_CLUSTERS}_{TARGET_CLUSTER_ID}_bw{BANDWIDTH}.html')
     m.save(map_output_path)
 
     print(f"Network KDEの可視化マップを保存しました: {map_output_path}")

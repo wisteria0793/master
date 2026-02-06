@@ -15,7 +15,7 @@ from sklearn.preprocessing import StandardScaler
 
 # --- 設定 ---
 BASE_DIR = '/Users/atsuyakatougi/Desktop/master'
-N_CLUSTERS = 10 # クラスタ数（調整可能）
+N_CLUSTERS = 19 # クラスタ数（調整可能）
 
 # --- パス設定 ---
 # 集約済み（平均）エンベディングを使用

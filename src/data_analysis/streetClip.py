@@ -1,86 +1,89 @@
-# Load model directly
-from transformers import AutoProcessor, AutoModelForZeroShotImageClassification
-# 以下のライブラリを追記
+from transformers import AutoProcessor, AutoModelForZeroShotImageClassification, BlipProcessor, BlipForConditionalGeneration
 import torch
 from PIL import Image
+import os
 
-# --- 元々のコード ---
-processor = AutoProcessor.from_pretrained("geolocal/StreetCLIP")
-model = AutoModelForZeroShotImageClassification.from_pretrained("geolocal/StreetCLIP")
-# --------------------
+def load_streetclip_model():
+    """StreetCLIPモデルとプロセッサをロードする"""
+    processor = AutoProcessor.from_pretrained("geolocal/StreetCLIP")
+    model = AutoModelForZeroShotImageClassification.from_pretrained("geolocal/StreetCLIP")
+    return processor, model
 
-# --- ここから追記 ---
+def load_blip_model():
+    """BLIPモデルとプロセッサをロードする"""
+    caption_model_id = "Salesforce/blip-image-captioning-base"
+    processor = BlipProcessor.from_pretrained(caption_model_id)
+    model = BlipForConditionalGeneration.from_pretrained(caption_model_id)
+    return processor, model
 
-# 1. 分類したい画像を開く
-try:
-    # ここに分類したい画像のパスを指定してください
+def classify_with_streetclip(image, candidate_labels, processor, model):
+    """StreetCLIPを使用して画像を分類する"""
+    inputs = processor(images=image, text=candidate_labels, return_tensors="pt", padding=True)
+    with torch.no_grad():
+        outputs = model(**inputs)
+    
+    logits_per_image = outputs.logits_per_image
+    probs = logits_per_image.softmax(dim=1)
+    scores = probs.squeeze().tolist()
+    
+    results = sorted(zip(candidate_labels, scores), key=lambda x: x[1], reverse=True)
+    return results
+
+def extract_image_features(image, processor, model):
+    """StreetCLIPを使用して画像ベクトルを抽出する"""
+    inputs = processor(images=image, return_tensors="pt")
+    with torch.no_grad():
+        image_features = model.get_image_features(pixel_values=inputs.pixel_values)
+    return image_features
+
+def generate_caption_with_blip(image, processor, model):
+    """BLIPを使用して画像キャプションを生成する"""
+    inputs = processor(image, return_tensors="pt")
+    with torch.no_grad():
+        out = model.generate(**inputs)
+    caption = processor.decode(out[0], skip_special_tokens=True)
+    return caption
+
+def main():
+    # --- 1. 画像の準備 ---
     image_path = "data/raw/street_view_images_50m_optimized/pano_Z_vLZBn614K2XIsJUfla1g_h270.jpg"
-    # image_path = "data/raw/street_view_images_50m_optimized/pano_0q-yXuD4A5hj4rSOXCjjEg_h270.jpg"
-    # image_path = "data/raw/street_view_images_50m_optimized/pano_9UsWNHYoTVh1ZAmfwfZL9A_h0.jpg"   # 交差点
-    # image_path = "data/raw/street_view_images_50m_optimized/pano_20evggJpR7-kn-V8LGj-PQ_h270.jpg"   # 駅前通り
-    # image_path = "data/raw/street_view_images_50m_optimized/pano_3619beVjatq6BdKCBMLgkw_h180.jpg"   # 歩道
-    # image_path = "data/raw/street_view_images_50m_optimized/pano_aeymQh7nNrxa9EQcTyRYNA_h0.jpg"   # 石畳
+    
+    if not os.path.exists(image_path):
+        print(f"エラー: '{image_path}' が見つかりませんでした。")
+        return
 
     image = Image.open(image_path).convert("RGB")
-except FileNotFoundError:
-    print(f"エラー: '{image_path}' が見つかりませんでした。画像パスを確認してください。")
-    exit()
 
-# 2. 分類に使いたいラベルのリストを定義する
-# candidate_labels = ["urban area", "natural landscape", "residential street", "commercial district", "highway"]
-# candidate_labels = ["asphalt road", "cobblestone road", "intersection", "gravel road", "paved road", "sidewalk", "trail", "Scattered hailstone pavement"]
-# 路面の材質
-candidate_labels = [
-    # "asphalt road",      # アスファルト
-    "concrete road",     # コンクリート（白っぽい舗装路）
-    "cobblestone road",  # 石畳
-    "brick road",        # レンガ道
-    "gravel road",       # 砂利道
-    "dirt road",         # 土の道（未舗装）
-    "grassy trail"       # 草の生えた道
-]
-# 道路の種類・シーン
-# candidate_labels = [
-#     "highway",             # 高速道路
-#     "urban street",        # 市街地の通り（ビルや店がある）
-#     "residential street",  # 住宅街の道
-#     "country road",        # 田舎道
-#     "forest path",         # 森の小道
-#     "alleyway",            # 路地・裏道
-#     "parking lot"          # 駐車場（誤検知を防ぐための「その他」枠として有効）
-# ]
-# 構造
-# candidate_labels = [
-#     "straight road",    # 直線道路
-#     "curved road",      # カーブ
-#     "intersection",     # 交差点
-#     "crosswalk",        # 横断歩道
-#     "roundabout",       # 環状交差点
-#     "sidewalk"          # 歩道
-# ]
+    # --- 2. StreetCLIP による処理 ---
+    print("StreetCLIPモデルをロード中...")
+    sc_processor, sc_model = load_streetclip_model()
+    
+    # 分類
+    candidate_labels = [
+        "concrete road",
+        "cobblestone road",
+        "brick road",
+        "gravel road",
+        "dirt road",
+        "grassy trail"
+    ]
+    
+    # print("--- StreetCLIP 分類結果 ---")
+    # classification_results = classify_with_streetclip(image, candidate_labels, sc_processor, sc_model)
+    # for label, score in classification_results:
+    #     print(f"{label}: {score:.4f}")
 
+    # # 特徴抽出
+    # features = extract_image_features(image, sc_processor, sc_model)
+    # print(f"\n抽出された画像ベクトルの形状: {features.shape}")
 
-# 3. モデルへの入力を作成する
-inputs = processor(images=image, text=candidate_labels, return_tensors="pt", padding=True)
+    # --- 3. BLIP によるキャプション生成 ---
+    print("\nBLIPモデルをロード中...")
+    blip_processor, blip_model = load_blip_model()
+    
+    print("--- 画像キャプション生成 (BLIP) ---")
+    caption = generate_caption_with_blip(image, blip_processor, blip_model)
+    print(f"生成されたキャプション: {caption}")
 
-# 4. モデルで分類を実行する
-with torch.no_grad():
-    outputs = model(**inputs)
-
-# 5. 結果を取得して表示する
-logits_per_image = outputs.logits_per_image
-probs = logits_per_image.softmax(dim=1)  # スコアを確率に変換
-scores = probs.squeeze().tolist()
-
-print("--- 分類結果 ---")
-for label, score in sorted(zip(candidate_labels, scores), key=lambda x: x[1], reverse=True):
-    print(f"{label}: {score:.4f}")
-
-
-
-# ベクトル抽出のみを行いたい場合のコード例
-input = processor(images=image, return_tensors="pt")
-image_features = model.get_image_features(pixel_values=input.pixel_values)
-
-print(f"抽出された画像ベクトルの形状: {image_features.shape}")
-# print(image_features)
+if __name__ == "__main__":
+    main()
