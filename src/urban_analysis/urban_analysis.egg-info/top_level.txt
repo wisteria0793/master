@@ -1,0 +1,6 @@
+collect_data
+data_analysis
+evaluation
+genetic_algorithm
+gnn
+preprocess

@@ -1,0 +1,7 @@
+numpy
+pandas
+matplotlib
+torch
+tqdm
+requests
+python-dotenv
