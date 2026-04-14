@@ -17,4 +17,5 @@ __pycache__/
 models/
 
 # macOSやWindowsが自動生成する隠しファイル
-.DS_Store
+.DS_Storedata/
+data/

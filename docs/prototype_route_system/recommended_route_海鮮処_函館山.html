@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_421ff41f0ec0bf777d8264a380dde28c {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+</head>
+<body>
+    
+    
+            <div class="folium-map" id="map_421ff41f0ec0bf777d8264a380dde28c" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_421ff41f0ec0bf777d8264a380dde28c = L.map(
+                "map_421ff41f0ec0bf777d8264a380dde28c",
+                {
+                    center: [41.771856, 140.7324299],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 15,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_e8e33cfed60c7d0fbfc5e3071eeb63c7 = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_e8e33cfed60c7d0fbfc5e3071eeb63c7.addTo(map_421ff41f0ec0bf777d8264a380dde28c);
+        
+    
+            var marker_39841e255c9573870c1eb9997a0b8bb9 = L.marker(
+                [41.771856, 140.7324299],
+                {
+}
+            ).addTo(map_421ff41f0ec0bf777d8264a380dde28c);
+        
+    
+            var icon_2eac6a3f2acca5d447e49b34bc26cb7d = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "star",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_314736575ef2631508e1dbe8eb37c1dc = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_f0bfe38e47ef0ffd59ef234c64886864 = $(`<div id="html_f0bfe38e47ef0ffd59ef234c64886864" style="width: 100.0%; height: 100.0%;">【起点】 海鮮処 函館山 クラスタ: 6</div>`)[0];
+                popup_314736575ef2631508e1dbe8eb37c1dc.setContent(html_f0bfe38e47ef0ffd59ef234c64886864);
+            
+        
+
+        marker_39841e255c9573870c1eb9997a0b8bb9.bindPopup(popup_314736575ef2631508e1dbe8eb37c1dc)
+        ;
+
+        
+    
+    
+                marker_39841e255c9573870c1eb9997a0b8bb9.setIcon(icon_2eac6a3f2acca5d447e49b34bc26cb7d);
+            
+    
+            var marker_e43bb8d5320fedecb42e289bb53c128f = L.marker(
+                [41.7723044, 140.7324035],
+                {
+}
+            ).addTo(map_421ff41f0ec0bf777d8264a380dde28c);
+        
+    
+            var icon_9a29e17641a5236f12e40647bd191520 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_4bb5f930b4d9b82ccf6d15744c7dd8bd = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_aa437dcbc9e36406713da81894f75f1f = $(`<div id="html_aa437dcbc9e36406713da81894f75f1f" style="width: 100.0%; height: 100.0%;">【目的地 1】 マルキン焼きそば 距離: 50m 類似度: 1.0772</div>`)[0];
+                popup_4bb5f930b4d9b82ccf6d15744c7dd8bd.setContent(html_aa437dcbc9e36406713da81894f75f1f);
+            
+        
+
+        marker_e43bb8d5320fedecb42e289bb53c128f.bindPopup(popup_4bb5f930b4d9b82ccf6d15744c7dd8bd)
+        ;
+
+        
+    
+    
+                marker_e43bb8d5320fedecb42e289bb53c128f.setIcon(icon_9a29e17641a5236f12e40647bd191520);
+            
+    
+            var marker_bdfe613617109db3f59584678e2a6c4f = L.marker(
+                [41.771634, 140.731748],
+                {
+}
+            ).addTo(map_421ff41f0ec0bf777d8264a380dde28c);
+        
+    
+            var icon_6d28f40d3109fc7338a32e57676fd618 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_d53b74b48e7a492686e17f766a8629a6 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_b6478f5d24d9317a423e02b8de10698d = $(`<div id="html_b6478f5d24d9317a423e02b8de10698d" style="width: 100.0%; height: 100.0%;">【目的地 2】 海鮮居酒屋ヤン衆漁場 二代目昌栄丸 距離: 62m 類似度: 1.0780</div>`)[0];
+                popup_d53b74b48e7a492686e17f766a8629a6.setContent(html_b6478f5d24d9317a423e02b8de10698d);
+            
+        
+
+        marker_bdfe613617109db3f59584678e2a6c4f.bindPopup(popup_d53b74b48e7a492686e17f766a8629a6)
+        ;
+
+        
+    
+    
+                marker_bdfe613617109db3f59584678e2a6c4f.setIcon(icon_6d28f40d3109fc7338a32e57676fd618);
+            
+    
+            var marker_4be0ee3ddb6482a87c276f77305c59f8 = L.marker(
+                [41.7723437, 140.7303032],
+                {
+}
+            ).addTo(map_421ff41f0ec0bf777d8264a380dde28c);
+        
+    
+            var icon_48f7263e7d040dd7b861b1b89e9597b9 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_8731de8bd5fccfef0557314003bdd15b = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_4f23a12db1007ffdefd6a745bc76c2be = $(`<div id="html_4f23a12db1007ffdefd6a745bc76c2be" style="width: 100.0%; height: 100.0%;">【目的地 3】 炉ばた大謀 距離: 185m 類似度: 1.0788</div>`)[0];
+                popup_8731de8bd5fccfef0557314003bdd15b.setContent(html_4f23a12db1007ffdefd6a745bc76c2be);
+            
+        
+
+        marker_4be0ee3ddb6482a87c276f77305c59f8.bindPopup(popup_8731de8bd5fccfef0557314003bdd15b)
+        ;
+
+        
+    
+    
+                marker_4be0ee3ddb6482a87c276f77305c59f8.setIcon(icon_48f7263e7d040dd7b861b1b89e9597b9);
+            
+    
+            var marker_e8bd429f879b21ad99a6094c6c8ea4ad = L.marker(
+                [41.7731083, 140.730848],
+                {
+}
+            ).addTo(map_421ff41f0ec0bf777d8264a380dde28c);
+        
+    
+            var icon_47c0d3a0ba9bbadc8f489fc66864e902 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_723bda7298418f7e242a5a7401bf38d0 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_2aa55178fe68a227c02e33bfe6f6555c = $(`<div id="html_2aa55178fe68a227c02e33bfe6f6555c" style="width: 100.0%; height: 100.0%;">【目的地 4】 滋養軒 距離: 191m 類似度: 1.0773</div>`)[0];
+                popup_723bda7298418f7e242a5a7401bf38d0.setContent(html_2aa55178fe68a227c02e33bfe6f6555c);
+            
+        
+
+        marker_e8bd429f879b21ad99a6094c6c8ea4ad.bindPopup(popup_723bda7298418f7e242a5a7401bf38d0)
+        ;
+
+        
+    
+    
+                marker_e8bd429f879b21ad99a6094c6c8ea4ad.setIcon(icon_47c0d3a0ba9bbadc8f489fc66864e902);
+            
+    
+            var marker_8ebbf9d30374a8663dfe72bad9705162 = L.marker(
+                [41.7726094, 140.7301618],
+                {
+}
+            ).addTo(map_421ff41f0ec0bf777d8264a380dde28c);
+        
+    
+            var icon_fd3ec384d8309a2c1024aa0ee3a10f9c = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_eb1318f6c23c548ab1d08496d3ad6c96 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_c03f4ae860826e9b5eefa548b9f7b533 = $(`<div id="html_c03f4ae860826e9b5eefa548b9f7b533" style="width: 100.0%; height: 100.0%;">【目的地 5】 ○波商店 距離: 206m 類似度: 1.0811</div>`)[0];
+                popup_eb1318f6c23c548ab1d08496d3ad6c96.setContent(html_c03f4ae860826e9b5eefa548b9f7b533);
+            
+        
+
+        marker_8ebbf9d30374a8663dfe72bad9705162.bindPopup(popup_eb1318f6c23c548ab1d08496d3ad6c96)
+        ;
+
+        
+    
+    
+                marker_8ebbf9d30374a8663dfe72bad9705162.setIcon(icon_fd3ec384d8309a2c1024aa0ee3a10f9c);
+            
+    
+            var marker_5d6aab8001d5da4eb0c68b860a4b038c = L.marker(
+                [41.772592, 140.7301327],
+                {
+}
+            ).addTo(map_421ff41f0ec0bf777d8264a380dde28c);
+        
+    
+            var icon_3f8e5b9d337651e5a40d775b2c1d94d1 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_38dc55ca208d618f163cddc418a3f17d = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_9c7b07d4a84444e668d44a69bb5c4c42 = $(`<div id="html_9c7b07d4a84444e668d44a69bb5c4c42" style="width: 100.0%; height: 100.0%;">【目的地 6】 津軽屋食堂 距離: 207m 類似度: 1.0777</div>`)[0];
+                popup_38dc55ca208d618f163cddc418a3f17d.setContent(html_9c7b07d4a84444e668d44a69bb5c4c42);
+            
+        
+
+        marker_5d6aab8001d5da4eb0c68b860a4b038c.bindPopup(popup_38dc55ca208d618f163cddc418a3f17d)
+        ;
+
+        
+    
+    
+                marker_5d6aab8001d5da4eb0c68b860a4b038c.setIcon(icon_3f8e5b9d337651e5a40d775b2c1d94d1);
+            
+    
+            var marker_2747d732dcf7473e8f9eebc8b2f259fd = L.marker(
+                [41.772542, 140.7300736],
+                {
+}
+            ).addTo(map_421ff41f0ec0bf777d8264a380dde28c);
+        
+    
+            var icon_d07f547a38806beadf2881d62bc8da14 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_15ce027b0d15d8b216d8c7f2ef5110d5 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_a3d21b4dfcab082e21fb22a1ba3dbce3 = $(`<div id="html_a3d21b4dfcab082e21fb22a1ba3dbce3" style="width: 100.0%; height: 100.0%;">【目的地 7】 函館グルメジンギスカン ラムジン 距離: 210m 類似度: 1.0793</div>`)[0];
+                popup_15ce027b0d15d8b216d8c7f2ef5110d5.setContent(html_a3d21b4dfcab082e21fb22a1ba3dbce3);
+            
+        
+
+        marker_2747d732dcf7473e8f9eebc8b2f259fd.bindPopup(popup_15ce027b0d15d8b216d8c7f2ef5110d5)
+        ;
+
+        
+    
+    
+                marker_2747d732dcf7473e8f9eebc8b2f259fd.setIcon(icon_d07f547a38806beadf2881d62bc8da14);
+            
+    
+            var marker_9d06837fba587d96c0eb14338ec15fa5 = L.marker(
+                [41.7725419, 140.7300734],
+                {
+}
+            ).addTo(map_421ff41f0ec0bf777d8264a380dde28c);
+        
+    
+            var icon_e2ea2009a043ac8b15224e95b204ff17 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_334a9700247849f8a75a88043fd3fba9 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_1ed833be6f513c4711aa8fe60f471ea0 = $(`<div id="html_1ed833be6f513c4711aa8fe60f471ea0" style="width: 100.0%; height: 100.0%;">【目的地 8】 北の台所　ヤマタイチ 距離: 210m 類似度: 1.0823</div>`)[0];
+                popup_334a9700247849f8a75a88043fd3fba9.setContent(html_1ed833be6f513c4711aa8fe60f471ea0);
+            
+        
+
+        marker_9d06837fba587d96c0eb14338ec15fa5.bindPopup(popup_334a9700247849f8a75a88043fd3fba9)
+        ;
+
+        
+    
+    
+                marker_9d06837fba587d96c0eb14338ec15fa5.setIcon(icon_e2ea2009a043ac8b15224e95b204ff17);
+            
+    
+            var marker_963c983fed8486a6b4535afe8636b163 = L.marker(
+                [41.7723404, 140.7299124],
+                {
+}
+            ).addTo(map_421ff41f0ec0bf777d8264a380dde28c);
+        
+    
+            var icon_d736493fe537863fc40f75eca9781463 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_a173abc98a61c690dd83c6231fe6ec8a = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_0756a37481511cf9ec60ebc11f5ce22a = $(`<div id="html_0756a37481511cf9ec60ebc11f5ce22a" style="width: 100.0%; height: 100.0%;">【目的地 9】 shell bar　きさらぎ 距離: 216m 類似度: 1.0868</div>`)[0];
+                popup_a173abc98a61c690dd83c6231fe6ec8a.setContent(html_0756a37481511cf9ec60ebc11f5ce22a);
+            
+        
+
+        marker_963c983fed8486a6b4535afe8636b163.bindPopup(popup_a173abc98a61c690dd83c6231fe6ec8a)
+        ;
+
+        
+    
+    
+                marker_963c983fed8486a6b4535afe8636b163.setIcon(icon_d736493fe537863fc40f75eca9781463);
+            
+    
+            var marker_f69d396191e2cb3de5bb354a1ed6f60d = L.marker(
+                [41.7730849, 140.7292094],
+                {
+}
+            ).addTo(map_421ff41f0ec0bf777d8264a380dde28c);
+        
+    
+            var icon_2123fb74c37af207d9f5b13a3edea7d7 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_cc77ea9bfa882a0af0cf3aa3d8f021eb = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_d3212228240ab64db00b598b37b69ed6 = $(`<div id="html_d3212228240ab64db00b598b37b69ed6" style="width: 100.0%; height: 100.0%;">【目的地 10】 丸善 瀧澤商店 距離: 300m 類似度: 1.0812</div>`)[0];
+                popup_cc77ea9bfa882a0af0cf3aa3d8f021eb.setContent(html_d3212228240ab64db00b598b37b69ed6);
+            
+        
+
+        marker_f69d396191e2cb3de5bb354a1ed6f60d.bindPopup(popup_cc77ea9bfa882a0af0cf3aa3d8f021eb)
+        ;
+
+        
+    
+    
+                marker_f69d396191e2cb3de5bb354a1ed6f60d.setIcon(icon_2123fb74c37af207d9f5b13a3edea7d7);
+            
+    
+            var poly_line_36d9a9922da2f8bea9fe3a4ea8024cbc = L.polyline(
+                [[41.7720581, 140.7327493], [41.7718157, 140.7331649], [41.7717173, 140.7330792], [41.7717173, 140.7330792], [41.7716301, 140.7332444], [41.7716301, 140.7332444], [41.7717434, 140.7333522], [41.7718372, 140.7334427], [41.7718372, 140.7334427], [41.7718758, 140.7333677], [41.7721598, 140.7328453], [41.7721598, 140.7328453], [41.7723814, 140.7324083], [41.7724404, 140.7322969], [41.7724749, 140.7322344], [41.7724749, 140.7322344], [41.7723946, 140.7321562], [41.7716831, 140.7315103], [41.7716831, 140.7315103], [41.7716695, 140.7315514], [41.7716695, 140.7315514], [41.7716831, 140.7315103], [41.7716831, 140.7315103], [41.7716218, 140.7314551], [41.7716218, 140.7314551], [41.7715853, 140.7314219], [41.7715636, 140.7314012], [41.7715357, 140.7313736], [41.7715357, 140.7313736], [41.7716109, 140.7311553], [41.7716109, 140.7311553], [41.7718528, 140.730453], [41.7718528, 140.730453], [41.7720883, 140.7297685], [41.7720883, 140.7297685], [41.7721181, 140.7297896], [41.7721405, 140.7298058], [41.772181, 140.7298331], [41.772181, 140.7298331], [41.772224, 140.7298686], [41.772224, 140.7298686], [41.7722684, 140.7298006], [41.7722684, 140.7298006], [41.7722993, 140.72971], [41.7722993, 140.72971], [41.7723299, 140.7296263], [41.7723299, 140.7296263], [41.7727097, 140.7299456], [41.7727097, 140.7299456], [41.7728503, 140.7295588], [41.7728503, 140.7295588], [41.7730138, 140.7290831], [41.7730138, 140.7290831], [41.7728503, 140.7295588], [41.7728503, 140.7295588], [41.7724087, 140.7292992], [41.7724087, 140.7292992], [41.7723359, 140.7295056], [41.7723359, 140.7295056], [41.7723229, 140.7295726], [41.7723299, 140.7296263], [41.7723299, 140.7296263], [41.7722993, 140.72971], [41.7722993, 140.72971], [41.7722684, 140.7298006], [41.7722684, 140.7298006], [41.7723149, 140.7298221], [41.7724994, 140.7299767], [41.7724994, 140.7299767], [41.7725583, 140.730026], [41.7725583, 140.730026], [41.7727209, 140.7301571], [41.7727209, 140.7301571], [41.7725583, 140.730026], [41.7725583, 140.730026], [41.7725, 140.7301509], [41.772483, 140.7301874], [41.772483, 140.7301874], [41.7724763, 140.7302017], [41.7723532, 140.7304767], [41.7723532, 140.7304767], [41.7722762, 140.7304065], [41.7722762, 140.7304065], [41.7723532, 140.7304767], [41.7723532, 140.7304767], [41.7724561, 140.7305604], [41.7724561, 140.7305604], [41.7725354, 140.7306243], [41.7725354, 140.7306243], [41.7730829, 140.7310651]],
+                {"bubblingMouseEvents": true, "color": "darkorange", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "darkorange", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_421ff41f0ec0bf777d8264a380dde28c);
+        
+    
+            poly_line_36d9a9922da2f8bea9fe3a4ea8024cbc.bindTooltip(
+                `<div>
+                     推薦ルート
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+</script>
+</html>

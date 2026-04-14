@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_1d1edee79731faa0bd24127c579adde9 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+</head>
+<body>
+    
+    
+            <div class="folium-map" id="map_1d1edee79731faa0bd24127c579adde9" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_1d1edee79731faa0bd24127c579adde9 = L.map(
+                "map_1d1edee79731faa0bd24127c579adde9",
+                {
+                    center: [41.771856, 140.7324299],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 15,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_8a6f7ffd55585ab15fab4d49c53642a4 = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_8a6f7ffd55585ab15fab4d49c53642a4.addTo(map_1d1edee79731faa0bd24127c579adde9);
+        
+    
+            var marker_cce0fd4cd8a2589245ee285d577671ad = L.marker(
+                [41.771856, 140.7324299],
+                {
+}
+            ).addTo(map_1d1edee79731faa0bd24127c579adde9);
+        
+    
+            var icon_1d575cedea02f200a7a5d9772b6efb79 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "star",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_2e1c4583031562baf170eb52339e9839 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_ad5db8e3d9c20bfbee98970e489b1e36 = $(`<div id="html_ad5db8e3d9c20bfbee98970e489b1e36" style="width: 100.0%; height: 100.0%;">【起点】 海鮮処 函館山 クラスタ: 6</div>`)[0];
+                popup_2e1c4583031562baf170eb52339e9839.setContent(html_ad5db8e3d9c20bfbee98970e489b1e36);
+            
+        
+
+        marker_cce0fd4cd8a2589245ee285d577671ad.bindPopup(popup_2e1c4583031562baf170eb52339e9839)
+        ;
+
+        
+    
+    
+                marker_cce0fd4cd8a2589245ee285d577671ad.setIcon(icon_1d575cedea02f200a7a5d9772b6efb79);
+            
+    
+            var marker_d9324a8435b5f583d37d9c7193d1b622 = L.marker(
+                [41.7717078, 140.7319878],
+                {
+}
+            ).addTo(map_1d1edee79731faa0bd24127c579adde9);
+        
+    
+            var icon_291bda0bb6b70354c1799c2b79dce773 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_c03bdb77d906ee18a03a5d2c539580ce = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_6f89d8184557cab093035bc69fa30c62 = $(`<div id="html_6f89d8184557cab093035bc69fa30c62" style="width: 100.0%; height: 100.0%;">【目的地 1】 四季風味 ささ樹 距離: 40m 類似度: 0.49</div>`)[0];
+                popup_c03bdb77d906ee18a03a5d2c539580ce.setContent(html_6f89d8184557cab093035bc69fa30c62);
+            
+        
+
+        marker_d9324a8435b5f583d37d9c7193d1b622.bindPopup(popup_c03bdb77d906ee18a03a5d2c539580ce)
+        ;
+
+        
+    
+    
+                marker_d9324a8435b5f583d37d9c7193d1b622.setIcon(icon_291bda0bb6b70354c1799c2b79dce773);
+            
+    
+            var marker_4e944dfe21abe98a5ef4173ff318cd05 = L.marker(
+                [41.7712069, 140.7320896],
+                {
+}
+            ).addTo(map_1d1edee79731faa0bd24127c579adde9);
+        
+    
+            var icon_0844211b8e9ed54edecd3293115c8e39 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_d4a7b5839988a5a1f1398da63b7f0969 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_3c289d1cde1e2bbdaa45ddf7b3b67be6 = $(`<div id="html_3c289d1cde1e2bbdaa45ddf7b3b67be6" style="width: 100.0%; height: 100.0%;">【目的地 2】 BURGER SHOP HOT BOX 距離: 77m 類似度: 0.52</div>`)[0];
+                popup_d4a7b5839988a5a1f1398da63b7f0969.setContent(html_3c289d1cde1e2bbdaa45ddf7b3b67be6);
+            
+        
+
+        marker_4e944dfe21abe98a5ef4173ff318cd05.bindPopup(popup_d4a7b5839988a5a1f1398da63b7f0969)
+        ;
+
+        
+    
+    
+                marker_4e944dfe21abe98a5ef4173ff318cd05.setIcon(icon_0844211b8e9ed54edecd3293115c8e39);
+            
+    
+            var marker_e16bf07706c60fbc41d52bff4301020c = L.marker(
+                [41.7710887, 140.731963],
+                {
+}
+            ).addTo(map_1d1edee79731faa0bd24127c579adde9);
+        
+    
+            var icon_94260175c3e89a6a8ae0720601bc049c = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_d07cd2ea5f468e3481de04b7eb14a8db = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_7d14ee6a83ed2b47e6343d85da3df523 = $(`<div id="html_7d14ee6a83ed2b47e6343d85da3df523" style="width: 100.0%; height: 100.0%;">【目的地 3】 魚河岸酒場　魚一心 距離: 94m 類似度: 0.52</div>`)[0];
+                popup_d07cd2ea5f468e3481de04b7eb14a8db.setContent(html_7d14ee6a83ed2b47e6343d85da3df523);
+            
+        
+
+        marker_e16bf07706c60fbc41d52bff4301020c.bindPopup(popup_d07cd2ea5f468e3481de04b7eb14a8db)
+        ;
+
+        
+    
+    
+                marker_e16bf07706c60fbc41d52bff4301020c.setIcon(icon_94260175c3e89a6a8ae0720601bc049c);
+            
+    
+            var poly_line_893fa04c3deb510677afe1c99eb60179 = L.polyline(
+                [[41.7720581, 140.7327493], [41.7721598, 140.7328453], [41.7724749, 140.7322344], [41.7716831, 140.7315103], [41.7716695, 140.7315514], [41.7716831, 140.7315103], [41.7710287, 140.7309059], [41.7710024, 140.730959], [41.7712581, 140.7320315]],
+                {"bubblingMouseEvents": true, "color": "darkorange", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "darkorange", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 6}
+            ).addTo(map_1d1edee79731faa0bd24127c579adde9);
+        
+    
+            poly_line_893fa04c3deb510677afe1c99eb60179.bindTooltip(
+                `<div>
+                     推薦ルート
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+</script>
+</html>
