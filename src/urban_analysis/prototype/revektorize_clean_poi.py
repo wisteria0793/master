@@ -20,9 +20,13 @@ def main():
         data = json.load(f)
     
     # 紹介文を抽出し、リスト形式の場合は結合する
+    # description がない場合は description_short を代わりに使用
     descriptions = []
     for f in data:
-        desc = f.get('description', '')
+        desc = f.get('description', [])
+        if not desc or len(desc) == 0:
+            desc = f.get('description_short', '')
+            
         if isinstance(desc, list):
             desc = " ".join([str(d) for d in desc])
         descriptions.append(str(desc))
