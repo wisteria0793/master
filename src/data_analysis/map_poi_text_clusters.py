@@ -12,9 +12,9 @@ def get_hex_colors(n):
     cmap = plt.get_cmap('tab20')
     return [mcolors.to_hex(cmap(i / n)) for i in range(n)]
 
-def main(n_clusters=20):
-    CSV_PATH = os.path.join(BASE_DIR, 'data', 'processed', 'poi', f'poi_text_clusters_{n_clusters}.csv')
-    OUTPUT_MAP_PATH = os.path.join(BASE_DIR, 'docs', 'results', f'poi_text_cluster_map_{n_clusters}.html')
+def main(n_clusters=8):
+    CSV_PATH = os.path.join(BASE_DIR, 'data', 'processed', 'poi', f'hakodate_poi_text_clusters_{n_clusters}.csv')
+    OUTPUT_MAP_PATH = os.path.join(BASE_DIR, 'docs', 'results', f'hakodate_poi_text_cluster_map_{n_clusters}.html')
 
     if not os.path.exists(CSV_PATH):
         print(f"Error: {CSV_PATH} が見つかりません。")
@@ -34,10 +34,12 @@ def main(n_clusters=20):
     m = folium.Map(location=[center_lat, center_lng], zoom_start=13, tiles='CartoDB positron')
     
     # クラスタごとのレイヤーを作成（表示/非表示を切り替えられるようにする）
+    # labels が 1 始まりであることを想定
     feature_groups = {}
-    for i in range(n_clusters_actual):
-        fg = folium.FeatureGroup(name=f"Text Cluster {i}")
-        feature_groups[i] = fg
+    unique_clusters = sorted(df['text_cluster'].unique())
+    for cluster_id in unique_clusters:
+        fg = folium.FeatureGroup(name=f"Text Cluster {cluster_id}")
+        feature_groups[cluster_id] = fg
         m.add_child(fg)
 
     for _, row in df.iterrows():

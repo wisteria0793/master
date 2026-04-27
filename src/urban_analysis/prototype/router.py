@@ -115,18 +115,29 @@ class RouteGenerator:
         path.append(0)
         return path[::-1]
 
-    def generate_route(self, target_poi, recommended_df, all_cluster_points_df):
+    def generate_route(self, target_poi, recommended_df, street_df):
+        """
+        起点POIから推薦POI群を巡る景観重視ルートを生成する
+        """
         if recommended_df.empty:
             return None
             
         start_coord = (target_poi['lat'], target_poi['lng'])
-        target_cluster = target_poi['cluster']
         
+        # 1. 起点POIの「景観クラスタ」を特定（StreetCLIPの最寄り点）
+        from scipy.spatial import KDTree
+        street_coords = street_df[['lat', 'lng']].values
+        tree = KDTree(street_coords)
+        _, idx = tree.query([start_coord[0], start_coord[1]])
+        target_landscape_cluster = street_df.iloc[idx]['cluster']
+        
+        print(f"起点付近の景観クラスタ: {target_landscape_cluster} を特定しました。")
+
         # 起点 + 推薦POIのリスト
         poi_coords = [start_coord] + [(r['lat'], r['lng']) for _, r in recommended_df.iterrows()]
         n_pois = len(poi_coords)
         
-        # 1. 範囲を絞ったサブグラフの抽出
+        # 2. 範囲を絞ったサブグラフの抽出
         print("\n経路周辺のサブグラフを抽出中...")
         try:
             lats, lngs = [p[0] for p in poi_coords], [p[1] for p in poi_coords]
@@ -138,10 +149,10 @@ class RouteGenerator:
             print(f"サブグラフ抽出エラー: {e}")
             subgraph = self.G
 
-        # 2. KDE計算用のイベントポイント（同じ景観クラスタの地点）を用意
+        # 3. KDE計算用のイベントポイント（同じ「景観クラスタ」の地点）を用意
         event_nodes = []
-        if all_cluster_points_df is not None:
-            cluster_events = all_cluster_points_df[all_cluster_points_df['cluster'] == target_cluster]
+        if street_df is not None:
+            cluster_events = street_df[street_df['cluster'] == target_landscape_cluster]
             if not cluster_events.empty:
                 try:
                     nodes = ox.distance.nearest_nodes(subgraph, X=cluster_events['lng'].tolist(), Y=cluster_events['lat'].tolist())

@@ -1,123 +1,96 @@
+import folium
 import os
 import sys
-import folium
+import pandas as pd
+from datetime import datetime
 
 # プロジェクトルートパス
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..'))
 sys.path.append(BASE_DIR)
 
+from src.urban_analysis.prototype.data_loader import get_merged_poi_data
 from src.urban_analysis.prototype.recommender import RouteRecommender
 from src.urban_analysis.prototype.router import RouteGenerator
-from src.urban_analysis.prototype.data_loader import load_and_cluster_embeddings
 
-OUTPUT_MAP_DIR = os.path.join(BASE_DIR, 'docs', 'prototype_route_system')
+# 出力設定
+OUTPUT_DIR = os.path.abspath(os.path.join(BASE_DIR, 'docs', 'results'))
+os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-def main(target_poi_name):
-    print("====================================")
-    print(f"観光ルート推薦プロトタイプ実行開始")
-    print(f"基準POI: {target_poi_name}")
-    print("====================================\n")
+def main(target_poi_name="函館朝市"):
+    print("=== 函館観光ルート推薦プロトタイプ (GNN + StreetCLIP 統合版) ===")
     
-    # 1. 推薦エンジンの初期化と実行
-    print("1. データ読み込み中...")
-    recommender = RouteRecommender()
-    
-    print("2. 推薦施設を抽出中...")
-    # プロトタイプの推薦ロジック（同じ景観クラスタ内、距離制約内、コサイン類似度TopN）
-    recommended_df = recommender.recommend(target_poi_name)
-    
-    if recommended_df.empty:
-        print("条件に合致する推薦POIが見つかりませんでした。別のPOIをお試しください。")
-        return
-
-    # 基準POI情報の取得
-    target_rows = recommender.poi_df[recommender.poi_df['name'].str.contains(target_poi_name, na=False)]
-    target_poi = target_rows.iloc[0]
-    
-    print("\n【推薦結果】")
-    for idx, row in recommended_df.iterrows():
-        print(f" - {row['name']} (距離: {row['distance_m']:.0f}m, 類似度: {row['similarity_score']:.4f}, クラスタ: {row['cluster']})")
-    
-    # 2. ルート生成の実行
-    print("\n3. 道路ネットワークグラフを取得＆ルート探索中...")
-    all_cluster_points_df = load_and_cluster_embeddings()
+    # 1. データの読み込み
+    print("データを準備中...")
+    poi_df, street_df = get_merged_poi_data()
+    recommender = RouteRecommender(poi_df=poi_df)
     router = RouteGenerator()
-    result = router.generate_route(target_poi, recommended_df, all_cluster_points_df)
     
-    if not result or not result[0]:
-        print("経路の生成に失敗しました。")
-        return
+    # 2. 起点POIの選択
+    print(f"\n[1] 起点POIを選択しました: {target_poi_name}")
+    
+    try:
+        # 現在時刻での推薦 (デモ用に9:00に設定)
+        sim_time = datetime.now().replace(hour=9, minute=0)
+        print(f"シミュレート時刻: {sim_time.strftime('%Y-%m-%d %H:%M')}")
         
-    route_geom, best_order = result
+        # 3. 関連エリア・施設の特定（GNN時空間埋め込み + 営業中フィルタ）
+        print("\n[2] 関連の深いエリアと近隣POIを特定中...")
+        recommended_df = recommender.recommend(target_poi_name, target_time=sim_time, top_n=5)
         
-    # 3. Foliumによる可視化
-    print("\n4. マップ（Folium）を生成中...")
-    start_lat = target_poi['lat']
-    start_lng = target_poi['lng']
-    
-    # 地図の初期化 (起点となるPOIを中心に)
-    # 起点から推薦ポイント全てが収まるように調整
-    m = folium.Map(location=[start_lat, start_lng], zoom_start=15)
-    
-    # 起点 (ターゲット) のプロット (赤・星)
-    folium.Marker(
-        location=[start_lat, start_lng],
-        popup=f"【起点】\n{target_poi['name']}\nクラスタ: {target_poi['cluster']}",
-        icon=folium.Icon(color='red', icon='star')
-    ).add_to(m)
-    
-    # TSPの訪問順序をマッピング
-    # best_order は [0, 3, 1, 2, 0] のようなリスト (0は起点、1〜Nは推薦POIのインデックス+1)
-    visit_order_map = {}
-    visit_num = 1
-    for node_idx in best_order:
-        if node_idx == 0:
-            continue
-        df_idx = node_idx - 1  # recommended_df の 0-based インデックス
-        if df_idx not in visit_order_map:
-            visit_order_map[df_idx] = visit_num
-            visit_num += 1
-    
-    # 推薦POIのプロット (青・情報アイコン)
-    for i in range(len(recommended_df)):
-        row = recommended_df.iloc[i]
-        order = visit_order_map.get(i, "?")
-        popup_text = f"【目的地 {order}】\n{row['name']}\n距離: {row['distance_m']:.0f}m\n類似度: {row['similarity_score']:.4f}"
+        if recommended_df.empty:
+            print("条件に合う推薦地点が見つかりませんでした。")
+            return
+
+        print(f"--- 推薦されたPOI (Top {len(recommended_df)}) ---")
+        for idx, row in recommended_df.iterrows():
+            print(f"- {row['name']} (GNNクラスタ: {row['cluster']}, 距離: {row['distance_m']:.0f}m)")
+            
+        # 起点POI情報の取得
+        target_poi = poi_df[poi_df['name'].str.contains(target_poi_name)].iloc[0]
+        
+        # 4. 景観重視ルートの生成 (StreetCLIPクラスタ連動)
+        print("\n[3] 景観特性を考慮したルートを探索中...")
+        route_coords, visit_order = router.generate_route(target_poi, recommended_df, street_df)
+        
+        # 5. 可視化
+        print("\n[4] マップを生成中...")
+        m = folium.Map(location=[target_poi['lat'], target_poi['lng']], zoom_start=15)
+        
+        # POIのプロット
+        # 起点
         folium.Marker(
-            location=[row['lat'], row['lng']],
-            popup=popup_text,
-            icon=folium.Icon(color='blue', icon='info-sign')
+            [target_poi['lat'], target_poi['lng']], 
+            popup=f"START: {target_poi['name']}", 
+            icon=folium.Icon(color='red', icon='play')
         ).add_to(m)
         
-    # 経路ポリラインの描画 (太めのオレンジ)
-    folium.PolyLine(
-        route_geom,
-        color='darkorange',
-        weight=6,
-        opacity=0.8,
-        tooltip="推薦ルート"
-    ).add_to(m)
-    
-    # 保存ディレクトリの確保
-    os.makedirs(OUTPUT_MAP_DIR, exist_ok=True)
-    
-    # ファイル名に対象POI名を付与 (スラッシュやスペースはアンダースコアに置換)
-    safe_poi_name = target_poi['name'].replace('/', '_').replace(' ', '_')
-    output_path = os.path.join(OUTPUT_MAP_DIR, f'recommended_route_{safe_poi_name}.html')
-    
-    m.save(output_path)
-    
-    print(f"\n完了！ルートマップを保存しました: {output_path}")
+        # 推薦POI
+        for i, idx in enumerate(visit_order[1:]): # 起点以外
+            row = recommended_df.iloc[idx-1]
+            folium.Marker(
+                [row['lat'], row['lng']], 
+                popup=f"STOP {i+1}: {row['name']}", 
+                icon=folium.Icon(color='blue', icon='info-sign')
+            ).add_to(m)
+            
+        # ルートの描画
+        if route_coords:
+            folium.PolyLine(route_coords, color="blue", weight=5, opacity=0.7).add_to(m)
+            
+        output_path = os.path.join(OUTPUT_DIR, f"prototype_route_map_{target_poi_name}.html")
+        m.save(output_path)
+        print(f"\n=== 完了 ===")
+        print(f"生成されたルートマップ: {output_path}")
+
+    except Exception as e:
+        print(f"エラー発生: {e}")
+        import traceback
+        traceback.print_exc()
 
 if __name__ == "__main__":
-    # 対象POIをコマンドライン引数で受け取るか、デフォルト値を設定
     if len(sys.argv) > 1:
         target_name = sys.argv[1]
     else:
-        # 函館を代表する観光地をデフォルトで設定
-        target_name = "函館山" 
+        target_name = "函館朝市" 
         
-    try:
-        main(target_name)
-    except Exception as e:
-        print(f"処理中にエラーが発生しました: {e}")
+    main(target_name)

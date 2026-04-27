@@ -1,11 +1,12 @@
 import numpy as np
 import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
+from datetime import datetime
 from .data_loader import get_merged_poi_data
 
 # プロトタイプの推薦関連パラメータ
-DISTANCE_THRESHOLD_M = 3000  # 10件抽出のため少し広めに設定（3km）
-TOP_N_RECOMMENDATIONS = 10     # 推薦する最大施設数
+DISTANCE_THRESHOLD_M = 3000
+TOP_N_RECOMMENDATIONS = 10
 
 def haversine_distance(coord1, coord2):
     """Haversine法による2点間の距離計算 (メートル)"""
@@ -17,19 +18,37 @@ def haversine_distance(coord1, coord2):
     return 6371000 * c # 地球半径(m)
 
 class RouteRecommender:
-    def __init__(self, poi_df=None, n_clusters=20):
-        """
-        推薦エンジンの初期化
-        """
+    def __init__(self, poi_df=None):
+        """推薦エンジンの初期化"""
         if poi_df is None:
-            self.poi_df = get_merged_poi_data(n_clusters=n_clusters)
+            # 最新のGNN統合データを読み込み
+            self.poi_df, self.street_df = get_merged_poi_data()
         else:
             self.poi_df = poi_df
         
-    def recommend(self, target_poi_name, distance_threshold=DISTANCE_THRESHOLD_M, top_n=TOP_N_RECOMMENDATIONS):
+    def is_currently_open(self, poi_row, target_time=None):
+        """指定された時間（デフォルトは現在）にPOIが営業中か判定する"""
+        if target_time is None:
+            target_time = datetime.now()
+        
+        # 曜日 (0=日, 1=月, ..., 6=土) に変換
+        day_idx = int(target_time.strftime("%w"))
+        hour_idx = target_time.hour
+        
+        temp_feat = poi_row['temp_feat']
+        # temp_feat: [0:24] hours, [24:31] days
+        # 営業日チェック
+        if temp_feat[24 + day_idx] < 0.5:
+            return False
+        # 営業時間チェック
+        if temp_feat[hour_idx] < 0.5:
+            return False
+            
+        return True
+
+    def recommend(self, target_poi_name, target_time=None, distance_threshold=DISTANCE_THRESHOLD_M, top_n=TOP_N_RECOMMENDATIONS, filter_open=True):
         """
-        基準となるPOI名から、徒歩圏内かつ意味的・景観的類似度が高いPOIを推薦する
-        （同一クラスタに限定せず、類似度主体のランキングを行う）
+        基準となるPOIから、関連が深い（GNN類似度が高い）エリアのPOIを推薦する
         """
         # 1. 基準となるPOIを検索
         target_rows = self.poi_df[self.poi_df['name'].str.contains(target_poi_name, na=False)]
@@ -37,36 +56,40 @@ class RouteRecommender:
             raise ValueError(f"指定されたPOI '{target_poi_name}' は見つかりませんでした。")
             
         target_poi = target_rows.iloc[0]
-        target_cluster = target_poi['cluster']
         target_coords = (target_poi['lat'], target_poi['lng'])
-        target_embedding = np.array(target_poi['text_embedding']).reshape(1, -1)
+        target_gnn_emb = np.array(target_poi['gnn_embedding']).reshape(1, -1)
         
-        # 2. 距離フィルタリング (まず歩行可能圏内に絞る)
+        # 2. フィルタリング
         temp_df = self.poi_df.copy()
         
-        # Haversine法を使用
+        # 距離計算
         temp_df['distance_m'] = temp_df.apply(
             lambda row: haversine_distance(target_coords, (row['lat'], row['lng'])), axis=1
         )
-        dist_filtered_df = temp_df[temp_df['distance_m'] <= distance_threshold].copy()
+        filtered_df = temp_df[temp_df['distance_m'] <= distance_threshold].copy()
         
+        # 営業中フィルタ (オプション)
+        if filter_open:
+            filtered_df['is_open'] = filtered_df.apply(lambda row: self.is_currently_open(row, target_time), axis=1)
+            filtered_df = filtered_df[filtered_df['is_open'] == True]
+
         # 自身を除外
-        dist_filtered_df = dist_filtered_df[dist_filtered_df['name'] != target_poi['name']]
+        filtered_df = filtered_df[filtered_df['name'] != target_poi['name']]
         
-        if dist_filtered_df.empty:
-            print(f"警告: {distance_threshold}m以内に対象施設が見つかりませんでした。")
+        if filtered_df.empty:
             return pd.DataFrame()
             
-        # 3. コサイン類似度による意味的ランキング（エンベディングを使用）
-        candidate_embeddings = np.vstack(dist_filtered_df['text_embedding'].values)
-        similarities = cosine_similarity(target_embedding, candidate_embeddings)[0]
+        # 3. GNN埋め込みによる関連度ランキング
+        candidate_embeddings = np.vstack(filtered_df['gnn_embedding'].values)
+        similarities = cosine_similarity(target_gnn_emb, candidate_embeddings)[0]
+        filtered_df['similarity_score'] = similarities
         
-        # 景観クラスタによるボーナスは廃止し、純粋にテキストの類似度で評価する
-        dist_filtered_df['similarity_score'] = similarities
+        # 同じGNNクラスタに属するものを優先（ボーナス付与）し、関連エリアとしての性質を強める
+        target_cluster = target_poi['cluster']
+        filtered_df.loc[filtered_df['cluster'] == target_cluster, 'similarity_score'] += 0.2
         
-        # 類似度が高い順にソートしてTop Nを取得
-        recommended_df = dist_filtered_df.sort_values(by='similarity_score', ascending=False).head(top_n)
-        
+        # ソートして終了
+        recommended_df = filtered_df.sort_values(by='similarity_score', ascending=False).head(top_n)
         return recommended_df
 
 if __name__ == "__main__":
