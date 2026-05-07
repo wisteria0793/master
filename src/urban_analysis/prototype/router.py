@@ -56,85 +56,109 @@ class RouteGenerator:
 
         return edge_densities
 
-    def _solve_tsp_held_karp(self, cost_matrix):
-        """動的計画法 (Held-Karp) によるTSP厳密解の算出"""
-        n = len(cost_matrix)
-        # dp[(mask, last_node)] = (min_cost, parent_node)
-        dp = {}
-
-        # 初期状態: 起点(0)から各ノード(i)へのコスト
-        for i in range(1, n):
-            dp[(1 << i | 1, i)] = (cost_matrix[0][i], 0)
-
-        # 部分集合のサイズを2からn-1まで増やす (起点0は常に含める)
-        import itertools
-        for size in range(2, n):
-            for subset in itertools.combinations(range(1, n), size):
-                mask = 1
-                for node in subset:
-                    mask |= (1 << node)
-                
-                for next_node in range(1, n):
-                    if not (mask & (1 << next_node)):
-                        continue
-                    
-                    prev_mask = mask ^ (1 << next_node)
-                    res = []
-                    for prev_node in range(1, n):
-                        if prev_node == next_node or not (prev_mask & (1 << prev_node)):
-                            continue
-                        if (prev_mask, prev_node) in dp:
-                            res.append((dp[(prev_mask, prev_node)][0] + cost_matrix[prev_node][next_node], prev_node))
-                    
-                    if res:
-                        dp[(mask, next_node)] = min(res)
-
-        # 全ノードを巡回した状態 (Hamiltonian Path の終点を探す)
-        full_mask = (1 << n) - 1
-        res = []
-        for i in range(1, n):
-            if (full_mask, i) in dp:
-                res.append((dp[(full_mask, i)][0], i))
-        
-        if not res:
-            return list(range(n)) # フォールバック
-
-        best_res = min(res)
-        min_total_cost = best_res[0]
-        last_node = best_res[1]
-        
-        # 経路の復元
-        path = []
-        curr_mask = full_mask
-        curr_node = last_node
-        while curr_node != 0:
-            path.append(curr_node)
-            prev_node = dp[(curr_mask, curr_node)][1]
-            curr_mask ^= (1 << curr_node)
-            curr_node = prev_node
-        path.append(0)
-        return path[::-1]
-
-    def generate_route(self, target_poi, recommended_df, street_df):
+    def _solve_tsptw_dfs(self, cost_matrix, time_matrix, time_windows, start_time_min, stay_duration_min):
         """
-        起点POIから推薦POI群を巡る景観重視ルートを生成する
+        DFSとパレート支配に基づく枝刈りを用いた時間制約付き経路探索。
+        開いていない（待ち時間が長い、または閉店後）POIはスキップし、
+        「最も多くのPOIを訪問でき、かつ景観コストが最小」となるルートを探索する。
+        """
+        n = len(cost_matrix)
+        best_visited_count = -1
+        best_cost = float('inf')
+        best_path = None
+
+        # [current_node, mask, current_cost, current_time, path]
+        stack = [(0, 1, 0.0, start_time_min, [0])]
+        memo = {}
+        
+        while stack:
+            curr_node, mask, curr_cost, curr_time, path = stack.pop()
+            
+            # パレート支配による枝刈り (同じ訪問ノード集合・現在地において、コストも時間も劣るなら探索打ち切り)
+            state = (mask, curr_node)
+            is_dominated = False
+            if state in memo:
+                for prev_cost, prev_time in memo[state]:
+                    if prev_cost <= curr_cost and prev_time <= curr_time:
+                        is_dominated = True
+                        break
+                if is_dominated:
+                    continue
+                # 現在のパスが過去のパスを支配している場合は更新
+                memo[state] = [(c, t) for c, t in memo[state] if not (curr_cost <= c and curr_time <= t)]
+                memo[state].append((curr_cost, curr_time))
+            else:
+                memo[state] = [(curr_cost, curr_time)]
+                
+            visited_count = bin(mask).count('1')
+            
+            # 帰還コストを加算してベストルートを更新するかチェック
+            ret_cost = cost_matrix[curr_node][0]
+            final_cost = curr_cost + ret_cost
+            
+            # 訪問数が多い、または訪問数が同じでコストが低い場合に更新
+            if visited_count > best_visited_count or (visited_count == best_visited_count and final_cost < best_cost):
+                best_visited_count = visited_count
+                best_cost = final_cost
+                best_path = path + [0]
+            
+            # 次のノードへの遷移
+            for next_node in range(1, n):
+                if not (mask & (1 << next_node)):
+                    move_cost = cost_matrix[curr_node][next_node]
+                    move_time = time_matrix[curr_node][next_node]
+                    
+                    arrival_time = curr_time + move_time
+                    open_t, close_t = time_windows[next_node]
+                    
+                    # 閉店時間を過ぎていたらこの経路は無効（スキップ）
+                    if arrival_time > close_t:
+                        continue
+                        
+                    # 開店前なら待機するが、待ち時間が長すぎる場合は立ち寄らない
+                    wait_time = max(0, open_t - arrival_time)
+                    if wait_time > 30: # 30分以上待つならスキップ
+                        continue
+                        
+                    departure_time = arrival_time + wait_time + stay_duration_min
+                    new_cost = curr_cost + move_cost
+                    new_mask = mask | (1 << next_node)
+                    
+                    stack.append((next_node, new_mask, new_cost, departure_time, path + [next_node]))
+                    
+        return best_path
+
+    def generate_route(self, target_poi, recommended_df, street_df, start_time_min=600, stay_duration_min=30):
+        """
+        起点POIから推薦POI群を巡る景観重視・時間枠考慮のルートを生成する
+        start_time_min: 出発時刻 (分) 例: 10:00 -> 600
+        stay_duration_min: 各POIの滞在時間 (分)
         """
         if recommended_df.empty:
             return None
             
         start_coord = (target_poi['lat'], target_poi['lng'])
         
-        # 1. 起点POIの「景観クラスタ」を特定（StreetCLIPの最寄り点）
-        from scipy.spatial import KDTree
-        street_coords = street_df[['lat', 'lng']].values
-        tree = KDTree(street_coords)
-        _, idx = tree.query([start_coord[0], start_coord[1]])
-        target_landscape_cluster = street_df.iloc[idx]['cluster']
-        
-        print(f"起点付近の景観クラスタ: {target_landscape_cluster} を特定しました。")
+        # 1. 起点POIの「景観クラスタ」を取得（phase3_recommenderで計算済みの値を使用）
+        if 'ls_cluster' in target_poi:
+            target_landscape_cluster = target_poi['ls_cluster']
+        else:
+            # フォールバック (万が一キーがない場合)
+            from scipy.spatial import KDTree
+            street_coords = street_df[['lat', 'lng']].values
+            tree = KDTree(street_coords)
+            _, idx = tree.query([start_coord[0], start_coord[1]])
+            target_landscape_cluster = street_df.iloc[idx]['cluster']
+            
+        print(f"経路探索用 景観クラスタ: {target_landscape_cluster} を適用します。")
 
-        # 起点 + 推薦POIのリスト
+        # 起点 + 推薦POIのリストと時間枠の準備
         poi_coords = [start_coord] + [(r['lat'], r['lng']) for _, r in recommended_df.iterrows()]
+        
+        # 時間枠の取得 (open_time, close_time)
+        target_tw = (target_poi.get('open_time', 0), target_poi.get('close_time', 1440))
+        time_windows = [target_tw] + [(r.get('open_time', 0), r.get('close_time', 1440)) for _, r in recommended_df.iterrows()]
+        
         n_pois = len(poi_coords)
         
         # 2. 範囲を絞ったサブグラフの抽出
@@ -172,24 +196,53 @@ class RouteGenerator:
             density = edge_densities.get((u, v, 0), 0.0)
             data['kde_cost'] = length / (1.0 + self.alpha * density)
 
-        # 4. 各POI間の景観コスト行列を事前計算
-        print(f"10個のPOI間の景観コスト行列を生成中 ({n_pois * (n_pois-1)} ペア)...")
+        # 4. 各POI間の景観コスト行列と移動時間行列を事前計算
+        print(f"{n_pois}個のPOI間の景観コスト行列・移動時間行列を生成中 ({n_pois * (n_pois-1)} ペア)...")
         poi_nodes = []
         for p in poi_coords:
             poi_nodes.append(ox.distance.nearest_nodes(subgraph, X=p[1], Y=p[0]))
             
         cost_matrix = np.zeros((n_pois, n_pois))
+        time_matrix = np.zeros((n_pois, n_pois))
+        WALKING_SPEED_M_PER_MIN = 72.0 # 約1.2m/s
+        
         for i in range(n_pois):
-            lengths = nx.single_source_dijkstra_path_length(subgraph, poi_nodes[i], weight='kde_cost')
+            lengths_cost = nx.single_source_dijkstra_path_length(subgraph, poi_nodes[i], weight='kde_cost')
+            lengths_dist = nx.single_source_dijkstra_path_length(subgraph, poi_nodes[i], weight='length')
             for j in range(n_pois):
                 if i == j:
                     cost_matrix[i][j] = 0
+                    time_matrix[i][j] = 0
                 else:
-                    cost_matrix[i][j] = lengths.get(poi_nodes[j], 1e9)
+                    cost_matrix[i][j] = lengths_cost.get(poi_nodes[j], 1e9)
+                    dist = lengths_dist.get(poi_nodes[j], 1e9)
+                    time_matrix[i][j] = dist / WALKING_SPEED_M_PER_MIN
 
-        # 5. TSPによる最適順序の決定
-        print("TSP最適化を実行中...")
-        best_order = self._solve_tsp_held_karp(cost_matrix)
+        # 5. TSPTWによる最適順序の決定
+        print(f"TSPTW最適化を実行中... (出発時刻: {start_time_min//60:02d}:{start_time_min%60:02d}, 滞在時間: {stay_duration_min}分)")
+        best_order = self._solve_tsptw_dfs(cost_matrix, time_matrix, time_windows, start_time_min, stay_duration_min)
+        
+        # スケジュール（到着予定時刻）の計算
+        schedules = []
+        current_time = start_time_min
+        for idx in range(len(best_order)):
+            if idx == 0:
+                schedules.append({'arrival': current_time, 'wait': 0, 'departure': current_time})
+            else:
+                u_idx = best_order[idx-1]
+                v_idx = best_order[idx]
+                move_time = time_matrix[u_idx][v_idx]
+                arrival = current_time + move_time
+                open_t, _ = time_windows[v_idx]
+                wait = max(0, open_t - arrival)
+                departure = arrival + wait + (stay_duration_min if v_idx != 0 else 0)
+                
+                schedules.append({
+                    'arrival': arrival,
+                    'wait': wait,
+                    'departure': departure
+                })
+                current_time = departure
         
         # 6. 最終的な経路ジオメトリの構築
         print("最終ルートを生成中...")
@@ -213,4 +266,4 @@ class RouteGenerator:
                 continue
                 
         print(f"-> 拡張ルート算出完了 (総物理距離: 約{total_length:.0f}m)")
-        return route_geometry, best_order
+        return route_geometry, best_order, schedules

@@ -1,0 +1,21 @@
+# フェーズ3 (ルート生成) タスクリスト
+
+- [x] `phase3_recommender.py` の作成
+  - `refined_poi_clusters_k8.csv` と景観単体GNN出力(`gnn_inputs_individual/landscape/nodes.csv`等)の読み込み機能実装
+  - 景観クラスタのKDTreeによる空間マッピング実装
+  - 指定された起点POIから、「同POIクラスタ」かつ「同景観クラスタ」のPOIを抽出するロジックの実装
+- [x] 景観クラスタ特定の改善 (Distance-weighted KNN)
+  - 座標をメートル単位に近似変換する処理の追加
+  - KDTreeによる上位5点の検索と、距離の逆数による重み付け投票ロジックの実装
+- [x] `run_phase3.py` の作成
+  - 全体のワークフローの実装
+  - 起点POIの指定
+  - `phase3_recommender.py` による候補POIの抽出
+  - `router.py` による Network KDE ルート生成と可視化
+- [x] Radius-based Distance-weighted Voting への改善
+  - `query(k=5)` から `query_ball_point(r=150)` への変更
+  - 取得したポイント群に対する自前での距離計算と重み付けロジックの実装
+  - 150m以内にポイントがない場合のフォールバック処理
+- [ ] テスト実行と検証
+  - 函館朝市や金森赤レンガ倉庫等のPOIを起点に再実行
+  - ルートマップHTMLの生成確認

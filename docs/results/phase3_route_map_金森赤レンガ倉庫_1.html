@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_a1937b23a284c80fecee55d665029cd2 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+</head>
+<body>
+    
+    
+            <div class="folium-map" id="map_a1937b23a284c80fecee55d665029cd2" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_a1937b23a284c80fecee55d665029cd2 = L.map(
+                "map_a1937b23a284c80fecee55d665029cd2",
+                {
+                    center: [41.7664817, 140.7163538],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 15,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_f012a5f064821a10edc251938cf3792c = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_f012a5f064821a10edc251938cf3792c.addTo(map_a1937b23a284c80fecee55d665029cd2);
+        
+    
+            var marker_3656ae0aa773980883ecd51914122658 = L.marker(
+                [41.7664817, 140.7163538],
+                {
+}
+            ).addTo(map_a1937b23a284c80fecee55d665029cd2);
+        
+    
+            var icon_729f8a51eb7ad0a78d70ff41ff847746 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "play",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_86384aebe47d71164e7a43afd0b4b963 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_e5933d23f9f5b18c1e497a911e0aab3c = $(`<div id="html_e5933d23f9f5b18c1e497a911e0aab3c" style="width: 100.0%; height: 100.0%;">START: 金森赤レンガ倉庫（みやげ店）</div>`)[0];
+                popup_86384aebe47d71164e7a43afd0b4b963.setContent(html_e5933d23f9f5b18c1e497a911e0aab3c);
+            
+        
+
+        marker_3656ae0aa773980883ecd51914122658.bindPopup(popup_86384aebe47d71164e7a43afd0b4b963)
+        ;
+
+        
+    
+    
+                marker_3656ae0aa773980883ecd51914122658.setIcon(icon_729f8a51eb7ad0a78d70ff41ff847746);
+            
+    
+            var marker_6bf86ac2cfec093963ea0366e769d1d5 = L.marker(
+                [41.7669896, 140.7161056],
+                {
+}
+            ).addTo(map_a1937b23a284c80fecee55d665029cd2);
+        
+    
+            var icon_d9e08e9b348cb4ff8185b93815927007 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_1ac41646bc572e1990026316ffb46f5c = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_ca4870b915222f785da2205d7658f071 = $(`<div id="html_ca4870b915222f785da2205d7658f071" style="width: 100.0%; height: 100.0%;"><b>STOP 1: 観光遊覧船ブルームーン</b><br>到着: 10:00<br>出発: 11:00<br>開店待ち: 29分</div>`)[0];
+                popup_1ac41646bc572e1990026316ffb46f5c.setContent(html_ca4870b915222f785da2205d7658f071);
+            
+        
+
+        marker_6bf86ac2cfec093963ea0366e769d1d5.bindPopup(popup_1ac41646bc572e1990026316ffb46f5c)
+        ;
+
+        
+    
+    
+                marker_6bf86ac2cfec093963ea0366e769d1d5.setIcon(icon_d9e08e9b348cb4ff8185b93815927007);
+            
+    
+            var marker_857ce4587c7744d3fbd7b4ef2e9700ac = L.marker(
+                [41.7666454, 140.7162961],
+                {
+}
+            ).addTo(map_a1937b23a284c80fecee55d665029cd2);
+        
+    
+            var icon_49b644f38bd6012d66d8bd8eae0a8a23 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_a40a839dccc60a9a09f74c21b8663249 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_91c775ed66955251b2cbdda794999a30 = $(`<div id="html_91c775ed66955251b2cbdda794999a30" style="width: 100.0%; height: 100.0%;"><b>STOP 2: 函館ビヤホール</b><br>到着: 11:00<br>出発: 11:30</div>`)[0];
+                popup_a40a839dccc60a9a09f74c21b8663249.setContent(html_91c775ed66955251b2cbdda794999a30);
+            
+        
+
+        marker_857ce4587c7744d3fbd7b4ef2e9700ac.bindPopup(popup_a40a839dccc60a9a09f74c21b8663249)
+        ;
+
+        
+    
+    
+                marker_857ce4587c7744d3fbd7b4ef2e9700ac.setIcon(icon_49b644f38bd6012d66d8bd8eae0a8a23);
+            
+    
+            var marker_a5e86560d1e6c6e166cf2a90b170a958 = L.marker(
+                [41.7651002, 140.7165378],
+                {
+}
+            ).addTo(map_a1937b23a284c80fecee55d665029cd2);
+        
+    
+            var icon_d9d3c277bbe9a158e7e9405e88de2bcc = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_4501c49688dd34a87678fccf7e083a08 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_2a6c34146a44bb02b21bb1e0aef1a644 = $(`<div id="html_2a6c34146a44bb02b21bb1e0aef1a644" style="width: 100.0%; height: 100.0%;"><b>STOP 3: はこだて恋いちご洋菓子店</b><br>到着: 11:33<br>出発: 12:03</div>`)[0];
+                popup_4501c49688dd34a87678fccf7e083a08.setContent(html_2a6c34146a44bb02b21bb1e0aef1a644);
+            
+        
+
+        marker_a5e86560d1e6c6e166cf2a90b170a958.bindPopup(popup_4501c49688dd34a87678fccf7e083a08)
+        ;
+
+        
+    
+    
+                marker_a5e86560d1e6c6e166cf2a90b170a958.setIcon(icon_d9d3c277bbe9a158e7e9405e88de2bcc);
+            
+    
+            var marker_05e782299a6bf157685687c6a268bdea = L.marker(
+                [41.7654159, 140.7166685],
+                {
+}
+            ).addTo(map_a1937b23a284c80fecee55d665029cd2);
+        
+    
+            var icon_96eeceace6bfa0787d637f1913e7796c = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_10bae1b65f3ef4cbff0ed0741dfd7df0 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_9fa6e79a0961977e888b5c15d464a380 = $(`<div id="html_9fa6e79a0961977e888b5c15d464a380" style="width: 100.0%; height: 100.0%;"><b>STOP 4: いろは</b><br>到着: 12:04<br>出発: 12:34</div>`)[0];
+                popup_10bae1b65f3ef4cbff0ed0741dfd7df0.setContent(html_9fa6e79a0961977e888b5c15d464a380);
+            
+        
+
+        marker_05e782299a6bf157685687c6a268bdea.bindPopup(popup_10bae1b65f3ef4cbff0ed0741dfd7df0)
+        ;
+
+        
+    
+    
+                marker_05e782299a6bf157685687c6a268bdea.setIcon(icon_96eeceace6bfa0787d637f1913e7796c);
+            
+    
+            var marker_486a9abfdf4aa43bf0bc9fd868f110e7 = L.marker(
+                [41.7638739, 140.7168449],
+                {
+}
+            ).addTo(map_a1937b23a284c80fecee55d665029cd2);
+        
+    
+            var icon_48e94503fdba722be18bcd3f65e899fc = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_1d7aee2fc1144c97080794c17f37b043 = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_19c3ec2ee1f9045787df5f6a6c153aa9 = $(`<div id="html_19c3ec2ee1f9045787df5f6a6c153aa9" style="width: 100.0%; height: 100.0%;"><b>STOP 5: cafe DripDrop</b><br>到着: 12:38<br>出発: 13:08</div>`)[0];
+                popup_1d7aee2fc1144c97080794c17f37b043.setContent(html_19c3ec2ee1f9045787df5f6a6c153aa9);
+            
+        
+
+        marker_486a9abfdf4aa43bf0bc9fd868f110e7.bindPopup(popup_1d7aee2fc1144c97080794c17f37b043)
+        ;
+
+        
+    
+    
+                marker_486a9abfdf4aa43bf0bc9fd868f110e7.setIcon(icon_48e94503fdba722be18bcd3f65e899fc);
+            
+    
+            var marker_b0643f88df207f4f0501291874935633 = L.marker(
+                [41.76553870000001, 140.7150736],
+                {
+}
+            ).addTo(map_a1937b23a284c80fecee55d665029cd2);
+        
+    
+            var icon_979654e04a627ad0772e852fdf2f8a9e = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_112480f6a71b4496816fa084ddf6cdca = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_87190a58cebbb3a7fc673845b521a082 = $(`<div id="html_87190a58cebbb3a7fc673845b521a082" style="width: 100.0%; height: 100.0%;"><b>STOP 6: 南部坂</b><br>到着: 13:13<br>出発: 13:43</div>`)[0];
+                popup_112480f6a71b4496816fa084ddf6cdca.setContent(html_87190a58cebbb3a7fc673845b521a082);
+            
+        
+
+        marker_b0643f88df207f4f0501291874935633.bindPopup(popup_112480f6a71b4496816fa084ddf6cdca)
+        ;
+
+        
+    
+    
+                marker_b0643f88df207f4f0501291874935633.setIcon(icon_979654e04a627ad0772e852fdf2f8a9e);
+            
+    
+            var marker_5b16bbbaa5eda5b1a2692f89ee24f2be = L.marker(
+                [41.7663697, 140.7152603],
+                {
+}
+            ).addTo(map_a1937b23a284c80fecee55d665029cd2);
+        
+    
+            var icon_907bbdf53ccca827e73e5815d8e0eead = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_bbfe53daa16d77e982f47fbb61ea0bbe = L.popup({
+  "maxWidth": 300,
+});
+
+        
+            
+                var html_ac1ace0a617de8c9dd681ec9705c2709 = $(`<div id="html_ac1ace0a617de8c9dd681ec9705c2709" style="width: 100.0%; height: 100.0%;"><b>STOP 7: 函館西波止場</b><br>到着: 13:43<br>出発: 14:13</div>`)[0];
+                popup_bbfe53daa16d77e982f47fbb61ea0bbe.setContent(html_ac1ace0a617de8c9dd681ec9705c2709);
+            
+        
+
+        marker_5b16bbbaa5eda5b1a2692f89ee24f2be.bindPopup(popup_bbfe53daa16d77e982f47fbb61ea0bbe)
+        ;
+
+        
+    
+    
+                marker_5b16bbbaa5eda5b1a2692f89ee24f2be.setIcon(icon_907bbdf53ccca827e73e5815d8e0eead);
+            
+    
+            var poly_line_7864cec69cceee19ef239d27e45f264f = L.polyline(
+                [[41.7665773, 140.7159713], [41.7667926, 140.7163824], [41.7667926, 140.7163824], [41.7665773, 140.7159713], [41.7665773, 140.7159713], [41.7662591, 140.7153158], [41.7662591, 140.7153158], [41.7661176, 140.715037], [41.7661176, 140.715037], [41.7660499, 140.7148663], [41.7660499, 140.7148663], [41.7660078, 140.7148982], [41.7659638, 140.7149626], [41.7659638, 140.7149626], [41.7654022, 140.7158437], [41.7654022, 140.7158437], [41.7649507, 140.7165679], [41.7649507, 140.7165679], [41.7649994, 140.7166313], [41.7649994, 140.7166313], [41.7650086, 140.7166777], [41.7650698, 140.7167519], [41.7650698, 140.7167519], [41.7651184, 140.716816], [41.7651313, 140.7168319], [41.7651461, 140.7168372], [41.7651461, 140.7168372], [41.7651707, 140.716875], [41.7651707, 140.716875], [41.765206, 140.7169377], [41.7652073, 140.7169646], [41.7652773, 140.717094], [41.7652773, 140.717094], [41.7656172, 140.7168227], [41.7656172, 140.7168227], [41.7652773, 140.717094], [41.7652773, 140.717094], [41.7652073, 140.7169646], [41.765206, 140.7169377], [41.7651707, 140.716875], [41.7651707, 140.716875], [41.7651461, 140.7168372], [41.7651461, 140.7168372], [41.7651313, 140.7168319], [41.7651184, 140.716816], [41.7650698, 140.7167519], [41.7650698, 140.7167519], [41.7650086, 140.7166777], [41.7649994, 140.7166313], [41.7649994, 140.7166313], [41.7649507, 140.7165679], [41.7649507, 140.7165679], [41.7649019, 140.7165154], [41.7649019, 140.7165154], [41.764876, 140.7165183], [41.7648548, 140.7164982], [41.7648548, 140.7164982], [41.7645432, 140.7161699], [41.7645432, 140.7161699], [41.7644992, 140.716248], [41.7644992, 140.716248], [41.7644397, 140.7163545], [41.7644397, 140.7163545], [41.7643524, 140.7162512], [41.7643524, 140.7162512], [41.7643319, 140.7161968], [41.7643173, 140.7161623], [41.7643183, 140.7161605], [41.7642986, 140.7161126], [41.7642986, 140.7161126], [41.7642544, 140.716055], [41.7642544, 140.716055], [41.7641827, 140.7161821], [41.7641827, 140.7161821], [41.7641969, 140.7162045], [41.7641997, 140.7162393], [41.764107, 140.7164396], [41.7640177, 140.7166705], [41.7640177, 140.7166705], [41.7640051, 140.7167074], [41.7640051, 140.7167074], [41.7640177, 140.7166705], [41.7640177, 140.7166705], [41.764107, 140.7164396], [41.7641997, 140.7162393], [41.7641969, 140.7162045], [41.7641827, 140.7161821], [41.7641827, 140.7161821], [41.7642544, 140.716055], [41.7642544, 140.716055], [41.7642986, 140.7161126], [41.7642986, 140.7161126], [41.7643394, 140.7161198], [41.7643398, 140.716119], [41.7643761, 140.7161151], [41.7644091, 140.7161368], [41.7644091, 140.7161368], [41.7644992, 140.716248], [41.7644992, 140.716248], [41.7648042, 140.716573], [41.7648042, 140.716573], [41.7648548, 140.7164982], [41.7648548, 140.7164982], [41.764876, 140.7165183], [41.7649019, 140.7165154], [41.7649019, 140.7165154], [41.7649507, 140.7165679], [41.7649507, 140.7165679], [41.7654022, 140.7158437], [41.7654022, 140.7158437], [41.7659638, 140.7149626], [41.7659638, 140.7149626], [41.7660078, 140.7148982], [41.7660499, 140.7148663], [41.7660499, 140.7148663], [41.7661176, 140.715037], [41.7661176, 140.715037], [41.7662591, 140.7153158], [41.7662591, 140.7153158], [41.7665773, 140.7159713]],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "blue", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.7, "smoothFactor": 1.0, "stroke": true, "weight": 5}
+            ).addTo(map_a1937b23a284c80fecee55d665029cd2);
+        
+</script>
+</html>
