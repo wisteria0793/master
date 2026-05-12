@@ -97,13 +97,21 @@
            - 起点POIと「機能クラスタ」および「景観クラスタ」が共に完全一致するPOIを母集団として抽出する。
            - 抽出されたPOIの中から、起点からの直線距離が近い順に上位10件（`top_n=10`）をルートに含める候補地点としてピックアップする。
         2. **経路生成と最適化 (Network KDE & TSP)**:
-           - **景観スコアリング (Network KDE)**: 四次カーネル（Quartic Kernel）を用いて道路上の景観密度を評価する。各交差点（ノード $n$）の密度 $D(n)$ は、バンド幅 $h$ 以内にある景観ポイント $i$ までのネットワーク距離 $d_i$ に基づき $D(n) = \sum_i \left( 1 - (d_i / h)^2 \right)^2$ で計算される。その後、道路（エッジ $e$）の単位長さあたりの密度 $E(e) = (D(u) + D(v)) / (2L)$ を算出する。
+           - **景観スコアリング (Network KDE)**: 四次カーネル（Quartic Kernel）を用いて道路上の景観密度を評価する。各交差点（ノード $n$）的密度 $D(n)$ は、バンド幅 $h$ 以内にある景観ポイント $i$ までのネットワーク距離 $d_i$ に基づき $D(n) = \sum_i \left( 1 - (d_i / h)^2 \right)^2$ で計算される。その後、道路（エッジ $e$）的単位長さあたりの密度 $E(e) = (D(u) + D(v)) / (2L)$ を算出する。
            - **移動距離と景観のトレードオフ**: 各道路の通過コストを $\text{Cost} = \text{物理的距離} / (1.0 + \alpha \times E(e))$ と定義（現在 $\alpha=10.0$）。これにより、「多少遠回りになっても、景観が良い道を通った方が総コストが下がる」というトレードオフを数理的に表現している。
            - **TSP（巡回セールスマン問題）**: 起点を含む計11地点のすべての組み合わせについて、景観コストを加味した最短経路コスト行列を作成する。この行列を用いて、全地点を1回ずつ巡る際の総景観コストが最小となる訪問順序を計算し、最終的なルートを決定する。
         3. **経路生成の高度化 (TSPTWによる営業時間考慮)**:
-           - **営業時間の解析**: 各POIが持つGoogle Places APIの営業時間データをパースし、各施設に「時間枠（Time Window: 開店〜閉店）」を付与する。
-           - **TSPTW（時間枠付き巡回セールスマン問題）**: 徒歩速度に基づく移動時間行列を導入し、DFS（深さ優先探索）と枝刈りを用いた厳密解探索によって、各施設の営業時間を遵守しながら景観コストが最小となるルート（到着・待機・出発のタイムスケジュール付き）を出力する。
-    - **実装スクリプト**: [`src/urban_analysis/prototype/run_phase3.py`](file:///Users/atsuyakatougi/Desktop/master/src/urban_analysis/prototype/run_phase3.py), `phase3_recommender.py`, `router.py`, `time_parser.py`
+            - **営業時間の解析**: 各POIが持つGoogle Places API的営業時間データをパースし、各施設に「時間枠（Time Window: 開店〜閉店）」を付与する。
+            - **TSPTW（時間枠付き巡回セールスマン問題）**: 徒歩速度に基づく移動時間行列を導入し、DFS（深さ優先探索）と枝刈りを用いた厳密解探索によって、各施設の営業時間を遵守しながら景観コストが最小となるルート（到着・待機・出発のタイムスケジュール付き）を出力する。
+         4. **Phase 4: 多様性・行動心理的考慮 (Diversity-based Recommendation)**:
+            - **景観ベースの抽出 (Context Filtering)**: 推薦候補的フィルタリング条件を緩和し、"機能クラスタ" の一致は要求せず、起点POI と "景観クラスタ（`ls_cluster`）" が完全に一致する POI 群を母集団として抽出する。これにより、同一地域特性（雰囲気）を共有する多様な施設が候補になる。
+            - **機能的多様性確保 (Diversity Filter)**: 抽出された母集団に対し、最大 10 件（`top_n=10`）の候補を以下の手順で選択する。
+              1. 起点POI からの直線距離（Haversine 距離）が近い順にソートする。
+              2. ルート候補へ順次追加する際、同一機能クラスタ（`cluster`）の上限は**2 件**とするが、**起点 POI と同じ機能クラスタ**については**上限 4 件**（`max_per_cluster_start = 4`）を設定し、少数派でも十分に反映できるようにする。実装上は `max_per_cluster` を辞書で管理し、`cluster_counts` と比較して決定する。
+              3. 上記制約を満たしつつ `top_n` 件に達した時点で選択を終了する。
+              4. これにより、機能が少数派であっても起点のテーマが尊重され、観光客の行動心理に合致したバランスの取れたルートが生成される。
+            - **実装上の定数**: `max_per_cluster_start = 4`, `max_per_cluster_others = 2`. コード内では `max_per_cluster = {start_cluster: max_per_cluster_start, 'default': max_per_cluster_others}` の形で管理。
+     - **実装スクリプト**: [`src/urban_analysis/prototype/run_phase4.py`](file:///Users/atsuyakatougi/Desktop/master/src/urban_analysis/prototype/run_phase4.py), `phase4_recommender.py`, `router.py`, `time_parser.py`
     - **可視化**: [`src/urban_analysis/prototype/visualize_all_clusters.py`](file:///Users/atsuyakatougi/Desktop/master/src/urban_analysis/prototype/visualize_all_clusters.py) により、GNN景観クラスタとPOI機能クラスタの独立した分布マップを出力。出力されるルートマップの各POIには到着・待機・出発時間が表示される。
 
 - **3. インタラクティブ・プロトタイプ構築 [開発予定]**:
@@ -114,8 +122,23 @@
 - **Network KDEの厳密化 (Lixel化によるエッジ評価の向上)**
   - 現在の景観スコアリングでは、計算速度（リアルタイム性）を優先するため、道路上の景観ポイントを「最寄りの交差点（ノード）」に吸着（スナップ）させる近似手法を採用している。また、エッジの密度スコアも「両端ノードの平均値」による線形補間で計算している。
   - プロトタイプとしてはバンド幅（$150m$等）の平滑化効果により十分に機能しているが、学術的な厳密性をより高める場合は、エッジ上に新たにノードを挿入して景観ポイントを正確に道路上へ投影する処理（Edge Split / Lixelation）の実装が望まれる（※ただし計算コストとのトレードオフとなる）。
+  - **Phase 5: 多目的最適化推薦** – 現在は重み付けスコアに基づく単一解のみ提示。全ての Pareto 解の可視化やユーザーがスライダーで選択できる機能は将来的に実装予定。
 
----
+## Phase5: 多目的最適化推薦
 
+- **目的**: 移動距離、Google rating、review count に加え、新たに「景観の良さ（NKDE近似空間密度）」の4指標を考慮し、NSGA‑III による多目的最適化で Pareto 前線を探索。
+- **実装方針**: `phase5_recommender.py` にてPhase4 のロジックを継承。起点POIと同じ景観クラスタの密集度（直線距離を用いたカーネル密度推定）を各候補の景観スコアとして算出し、rating、review count と共に 0‑1 正規化して4次元の目的関数へ組み込む。
+- **現在のステータス**: 重み付きスコアに基づく単一解のみ提示。全 Pareto 解の可視化やスライダー選択は将来的に実装予定。
+- **Phase4 の課題**:
+  1. 評価指標が距離と景観スコアのみで、利用者の満足度を十分に反映できない。
+  2. 単一目的最適化のため、景観と機能のトレードオフが不透明。
+  3. 再現性が低く、乱数シードが固定されていないため結果が変動しやすい。
+- **Phase5 の解決策**:
+  1. `filtered_facilities_final.json` から取得した Google rating と review count、さらに動的に計算した「景観スコア（NKDE近似）」を指標に統合。
+  2. NSGA‑III による 4 目的（距離、rating、review_count、景観の良さ）同時最適化で Pareto 前線を生成。
+  3. 実行時に `np.random.seed(42)`、`random.seed(42)`、`pymoo` の `seed=42` を設定し再現性を確保。
+- **再現性向上策**:
+  - パラメータは `config/phase5.yaml` に明示し、実行ログに全設定を出力。
+  - 依存パッケージは `requirements.txt` でバージョン固定。
+  - データ前処理を `phase5_data_preprocess.py` に分離し、入力ファイルの SHA256 ハッシュを記録して再現性を保証。
 詳細は [docs/urban_district_integration/](file:///Users/atsuyakatougi/Desktop/master/docs/urban_district_integration/) 以下のドキュメントを参照してください。
-

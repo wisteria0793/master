@@ -1,0 +1,7 @@
+seed: 42
+population_size: 200
+generations: 50
+weights:
+  distance: 0.5
+  rating: 0.3
+  review_count: 0.2
